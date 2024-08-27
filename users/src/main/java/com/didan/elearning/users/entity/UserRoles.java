@@ -20,9 +20,9 @@ public class UserRoles extends SuperClass {
   @EmbeddedId
   private UserRoleId userRoleId;
   @ManyToOne
-  @JoinColumn(name = "id")
+  @JoinColumn(name = "user_id", insertable = false, updatable = false)
   private User user;
   @ManyToOne
-  @JoinColumn(name = "id")
+  @JoinColumn(name = "role_id", insertable = false, updatable = false)
   private Role role;
 }

@@ -2,13 +2,17 @@ package com.didan.elearning.users.entity;
 
 import com.didan.elearning.users.constants.CheckBoolean;
 import com.didan.elearning.users.constants.GenderConstants;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import java.util.Date;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +24,7 @@ import lombok.ToString;
 public class User extends SuperClass {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private String id;
+  private String userId;
   @Column
   private String username;
   @Column
@@ -41,6 +45,8 @@ public class User extends SuperClass {
   private Enum<GenderConstants> gender;
   @Column
   private Enum<CheckBoolean> isActive;
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  private Set<UserRoles> roles;
   @PrePersist
   public void setDefaultGender() {
     this.gender = GenderConstants.UNDERTERMINED;

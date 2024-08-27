@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,8 +19,11 @@ import lombok.ToString;
 public class Role {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private String id;
+  private String roleId;
 
   @Column
   private Enum<RoleConstants> roleName;
+
+  @OneToMany(mappedBy = "role")
+  private Set<UserRoles> roles;
 }
