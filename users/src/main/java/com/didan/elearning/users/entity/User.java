@@ -10,9 +10,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,11 +44,25 @@ public class User extends SuperClass {
   @Column
   private String phoneNumber;
   @Column
-  private Enum<GenderConstants> gender;
+  private String gender;
   @Column
-  private Enum<CheckBoolean> isActive;
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private Set<UserRoles> roles;
+  private String isActive;
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private List<UserRoles> roles;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+  private List<UserNotifications> notifications;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+  private List<ActivityLogs> activityLogs;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+  private List<PasswordRequest> passwordRequests;
+
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+  @PrimaryKeyJoinColumn
+  private StudentDetails studentDetails;
+
   @PrePersist
   public void setDefaultGender() {
     this.gender = GenderConstants.UNDERTERMINED;

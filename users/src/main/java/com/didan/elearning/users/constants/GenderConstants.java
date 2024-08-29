@@ -1,15 +1,9 @@
 package com.didan.elearning.users.constants;
 
-import lombok.Getter;
+public class GenderConstants {
+  public static final String MALE ="MALE";
+  public static final String FEMALE = "FEMALE";
+  public static final String UNDERTERMINED = "UNDERTERMINED";
 
-@Getter
-public enum GenderConstants {
-  MALE("MALE"),
-  FEMAIL("FEMAIL"),
-  UNDERTERMINED("UNDERTERMINED");
-
-  private final String gender;
-  GenderConstants(String gender) {
-    this.gender = gender;
-  }
+  private GenderConstants(){}
 }

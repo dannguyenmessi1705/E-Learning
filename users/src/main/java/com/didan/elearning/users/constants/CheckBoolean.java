@@ -2,13 +2,8 @@ package com.didan.elearning.users.constants;
 
 import lombok.Getter;
 
-@Getter
-public enum CheckBoolean {
-  TRUE("TRUE"),
-  FALSE("FALSE");
-
-  private final String checkBoolean;
-  CheckBoolean(String checkBoolean) {
-    this.checkBoolean = checkBoolean;
-  }
+public class CheckBoolean {
+  public static final String TRUE = "TRUE";
+  public static final String FALSE = "FALSE";
+  private CheckBoolean(){}
 }

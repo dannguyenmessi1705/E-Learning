@@ -5,8 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import java.util.List;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,15 +14,17 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
-public class Role {
+@NoArgsConstructor @AllArgsConstructor @Getter @Setter @ToString
+public class ActivityLogs extends SuperClass{
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private String roleId;
+  private String activityLogId;
 
   @Column
-  private String roleName;
+  private String description;
 
-  @OneToMany(mappedBy = "role")
-  private List<UserRoles> roles;
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private User user;
+
 }
