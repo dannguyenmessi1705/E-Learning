@@ -1,0 +1,60 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: courses
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  profiles:
+    active: "dev"
+  config:
+    import: optional:configserver:http://localhost:8071
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+  api-docs:
+    path: /api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true
+    shutdown:
+      enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+endpoints:
+  shutdown:
+    enabled: true
+
+info:
+  app:
+    name: ${spring.application.name}
+    description: "E-Learning courses application"
+    version: "1.0.0"
+
+logging:
+  level:
+    com:
+      didan:
+        elearning:
+          courses: debug
