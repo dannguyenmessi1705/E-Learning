@@ -1,6 +1,4 @@
-package com.didan.elearning.users.constants;
-
-import lombok.Getter;
+package com.didan.elearning.users.constant;
 
 public class CheckBoolean {
   public static final String TRUE = "TRUE";

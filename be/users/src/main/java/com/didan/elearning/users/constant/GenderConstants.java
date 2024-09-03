@@ -1,4 +1,4 @@
-package com.didan.elearning.users.constants;
+package com.didan.elearning.users.constant;
 
 public class GenderConstants {
   public static final String MALE ="MALE";

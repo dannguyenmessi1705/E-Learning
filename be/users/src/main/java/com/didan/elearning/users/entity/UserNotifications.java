@@ -1,6 +1,6 @@
 package com.didan.elearning.users.entity;
 
-import com.didan.elearning.users.constants.CheckBoolean;
+import com.didan.elearning.users.constant.CheckBoolean;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

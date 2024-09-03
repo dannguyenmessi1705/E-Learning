@@ -1,4 +1,4 @@
-package com.didan.elearning.users.constants;
+package com.didan.elearning.users.constant;
 
 public class RoleConstants {
   public static final String ADMIN = "ADMIN";

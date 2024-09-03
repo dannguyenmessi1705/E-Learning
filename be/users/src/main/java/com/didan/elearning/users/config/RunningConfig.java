@@ -1,6 +1,6 @@
 package com.didan.elearning.users.config;
 
-import com.didan.elearning.users.constants.RoleConstants;
+import com.didan.elearning.users.constant.RoleConstants;
 import com.didan.elearning.users.entity.Role;
 import com.didan.elearning.users.entity.User;
 import com.didan.elearning.users.entity.UserRoles;
@@ -20,16 +20,24 @@ public class RunningConfig implements CommandLineRunner {
   private final UserRolesRepository userRolesRepository;
   @Override
   public void run(String... args) throws Exception {
-    Role role = new Role();
-    role.setRoleName(RoleConstants.GUEST);
-    roleRepository.save(role);
+    Role role1 = new Role();
+    role1.setRoleName(RoleConstants.GUEST);
+    roleRepository.save(role1);
 
-    User user = new User();
-    user.setUsername("Test");
-    userRepository.save(user);
+    Role role2 = new Role();
+    role2.setRoleName(RoleConstants.ADMIN);
+    roleRepository.save(role2);
 
-    UserRoles userRoles = new UserRoles();
-    userRoles.setUserRoleId(new UserRoleId(user.getUserId(), role.getRoleId()));
-    userRolesRepository.save(userRoles);
+    Role role3 = new Role();
+    role3.setRoleName(RoleConstants.STUDENT);
+    roleRepository.save(role3);
+
+    Role role4 = new Role();
+    role4.setRoleName(RoleConstants.INSTRUCTOR);
+    roleRepository.save(role4);
+
+    Role role5 = new Role();
+    role5.setRoleName(RoleConstants.ASSISTANT);
+    roleRepository.save(role5);
   }
 }

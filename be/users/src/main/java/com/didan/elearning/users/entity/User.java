@@ -1,7 +1,7 @@
 package com.didan.elearning.users.entity;
 
-import com.didan.elearning.users.constants.CheckBoolean;
-import com.didan.elearning.users.constants.GenderConstants;
+import com.didan.elearning.users.constant.CheckBoolean;
+import com.didan.elearning.users.constant.GenderConstants;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,7 +36,7 @@ public class User extends SuperClass {
   @Column
   private String fullName;
   @Column
-  private Date dateOfBirth;
+  private String dateOfBirth;
   @Column
   private String address;
   @Column
