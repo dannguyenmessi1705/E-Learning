@@ -63,6 +63,19 @@ public class UpdateUserDetailResponseDto {
   )
   private String phoneNumber;
   @Schema(
+      name = "gender",
+      description = "Gender for the user",
+      example = "MALE"
+  )
+  private String gender;
+  @Schema(
+      name = "studentCode",
+      description = "The student code of the student",
+      example = "D20201"
+  )
+
+  private String studentCode;
+  @Schema(
       name = "major",
       description = "The major of the student",
       example = "Computer Science"
@@ -75,4 +88,10 @@ public class UpdateUserDetailResponseDto {
   )
   @Pattern(regexp = "^\\d{4}$", message = "Start year must be 4 digits")
   private Integer startYear;
+  @Schema(
+      name = "isActive",
+      description = "The status of the user",
+      example = "true"
+  )
+  private Boolean isActive;
 }

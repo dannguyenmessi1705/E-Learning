@@ -64,6 +64,12 @@ public class UpdateUserRequestDto {
 //  @Pattern(regexp = "^\\d{10}$", message = "Phone number must be 10 digits")
   private String phoneNumber;
   @Schema(
+      name = "gender",
+      description = "Gender for the user",
+      example = "MALE"
+  )
+  private String gender;
+  @Schema(
       name = "major",
       description = "The major of the student",
       example = "Computer Science"

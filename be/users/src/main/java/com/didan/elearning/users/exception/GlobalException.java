@@ -29,25 +29,31 @@ public class GlobalException extends ResponseEntityExceptionHandler {
       String errorMessage = error.getDefaultMessage();
       validationErrors.put(fieldName, errorMessage);
     });
-    return new ResponseEntity<>(new ErrorDto(request.getDescription(false), HttpStatus.BAD_REQUEST, validationErrors,
+    return new ResponseEntity<>(new ErrorDto(request.getDescription(false), HttpStatus.BAD_REQUEST.value(), validationErrors,
         LocalDateTime.now()), HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(Exception.class)
   public final ResponseEntity<ErrorDto> handleAllExceptions(Exception ex, WebRequest request) {
-    return new ResponseEntity<>(new ErrorDto(request.getDescription(false), HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(),
+    return new ResponseEntity<>(new ErrorDto(request.getDescription(false), HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(),
         LocalDateTime.now()), HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(UserAlreadyExistException.class)
   public final ResponseEntity<ErrorDto> handleUserAlreadyExistException(UserAlreadyExistException ex, WebRequest request) {
-    return new ResponseEntity<>(new ErrorDto(request.getDescription(false), HttpStatus.BAD_REQUEST, ex.getMessage(),
+    return new ResponseEntity<>(new ErrorDto(request.getDescription(false), HttpStatus.BAD_REQUEST.value(), ex.getMessage(),
         LocalDateTime.now()), HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(ResourceNotFoundException.class)
   public final ResponseEntity<ErrorDto> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
-    return new ResponseEntity<>(new ErrorDto(request.getDescription(false), HttpStatus.NOT_FOUND, ex.getMessage(),
+    return new ResponseEntity<>(new ErrorDto(request.getDescription(false), HttpStatus.NOT_FOUND.value(), ex.getMessage(),
         LocalDateTime.now()), HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(FieldErrorException.class)
+  public final ResponseEntity<ErrorDto> handleFieldErrorException(FieldErrorException ex, WebRequest request) {
+    return new ResponseEntity<>(new ErrorDto(request.getDescription(false), HttpStatus.BAD_REQUEST.value(), ex.getMessage(),
+        LocalDateTime.now()), HttpStatus.BAD_REQUEST);
   }
 }

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
     name = "CreateUser",
     description = "The user creation request body"
 )
-public class CreateUserResponseDto {
+public class CreateUserResponseDto{
   @Schema(
       name = "userId",
       description = "The ID of the user",

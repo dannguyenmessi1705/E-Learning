@@ -8,6 +8,7 @@ import com.didan.elearning.users.entity.key.UserRoleId;
 import com.didan.elearning.users.repository.RoleRepository;
 import com.didan.elearning.users.repository.UserRepository;
 import com.didan.elearning.users.repository.UserRolesRepository;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -20,24 +21,35 @@ public class RunningConfig implements CommandLineRunner {
   private final UserRolesRepository userRolesRepository;
   @Override
   public void run(String... args) throws Exception {
-    Role role1 = new Role();
-    role1.setRoleName(RoleConstants.GUEST);
-    roleRepository.save(role1);
+    Optional<Role> guest = roleRepository.findFirstByRoleName(RoleConstants.GUEST);
+    if (guest.isEmpty()) {
+      createRoles(RoleConstants.GUEST);
+    }
 
-    Role role2 = new Role();
-    role2.setRoleName(RoleConstants.ADMIN);
-    roleRepository.save(role2);
+    Optional<Role> admin = roleRepository.findFirstByRoleName(RoleConstants.ADMIN);
+    if (admin.isEmpty()) {
+      createRoles(RoleConstants.ADMIN);
+    }
 
-    Role role3 = new Role();
-    role3.setRoleName(RoleConstants.STUDENT);
-    roleRepository.save(role3);
+    Optional<Role> student = roleRepository.findFirstByRoleName(RoleConstants.STUDENT);
+    if (student.isEmpty()) {
+      createRoles(RoleConstants.STUDENT);
+    }
 
-    Role role4 = new Role();
-    role4.setRoleName(RoleConstants.INSTRUCTOR);
-    roleRepository.save(role4);
+    Optional<Role> instructor = roleRepository.findFirstByRoleName(RoleConstants.INSTRUCTOR);
+    if (instructor.isEmpty()) {
+      createRoles(RoleConstants.INSTRUCTOR);
+    }
 
-    Role role5 = new Role();
-    role5.setRoleName(RoleConstants.ASSISTANT);
-    roleRepository.save(role5);
+    Optional<Role> assistant = roleRepository.findFirstByRoleName(RoleConstants.ASSISTANT);
+    if (assistant.isEmpty()) {
+      createRoles(RoleConstants.ASSISTANT);
+    }
+  }
+
+  void createRoles(String roleName) {
+    Role role = new Role();
+    role.setRoleName(roleName);
+    roleRepository.save(role);
   }
 }

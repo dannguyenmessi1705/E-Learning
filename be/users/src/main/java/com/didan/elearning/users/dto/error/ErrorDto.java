@@ -15,7 +15,7 @@ public class ErrorDto {
   @Schema(description = "API path invoked by client")
   private String apiPath;
   @Schema(description = "Error code representing the error happened")
-  private HttpStatus errorCode;
+  private Integer errorCode;
   @Schema(description = "Error message describing the error happened")
   private Object errorMsg;
   @Schema(description = "Time when the error happened")
