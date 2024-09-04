@@ -2,6 +2,7 @@ package com.didan.elearning.users.controller.impl;
 
 import com.didan.elearning.users.constant.MessageConstant;
 import com.didan.elearning.users.controller.IUserController;
+import com.didan.elearning.users.dto.request.ChangePasswordRequestDto;
 import com.didan.elearning.users.dto.request.CreateUserRequestDto;
 import com.didan.elearning.users.dto.request.UpdateUserRequestDto;
 import com.didan.elearning.users.dto.response.CreateUserResponseDto;
@@ -131,6 +132,20 @@ public class UserControllerImpl implements IUserController {
       log.info("User not deactivated: {}", userId);
       return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.BAD_REQUEST.value(),
           "User can not deactivated", "userId: " + userId), HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Override
+  public ResponseEntity<GeneralResponse<String>> changePassword(
+      ChangePasswordRequestDto changePasswordRequestDto) {
+    if (userService.changePassword(changePasswordRequestDto.getToken(), changePasswordRequestDto.getPassword())) {
+      log.info("Password changed successfully");
+      return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(),
+          "Password changed successfully", ""), HttpStatus.OK);
+    } else {
+      log.info("Password not changed");
+      return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.BAD_REQUEST.value(),
+          "Password can not changed", ""), HttpStatus.BAD_REQUEST);
     }
   }
 }

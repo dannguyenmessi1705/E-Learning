@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -19,12 +20,12 @@ public class PasswordRequestControllerImpl implements IPasswordRequestController
   private final IPasswordRequestService passwordRequestService;
   @Override
   public ResponseEntity<GeneralResponse<String>> createPasswordRequest(
-      @RequestBody
+      @RequestParam
       @NotBlank
       @Email
       String email) {
     log.info("Creating password request...");
-    passwordRequestService.createPasswordRequest(email);
-    return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.CREATED.value(), "Password request created successfully", null), HttpStatus.CREATED);
+    String token = passwordRequestService.createPasswordRequest(email);
+    return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.CREATED.value(), "Password request created successfully", "token: " + token), HttpStatus.CREATED);
   }
 }

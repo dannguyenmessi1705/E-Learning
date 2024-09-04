@@ -1,5 +1,6 @@
 package com.didan.elearning.users.service;
 
 public interface IPasswordRequestService {
-  void createPasswordRequest(String email);
+  String createPasswordRequest(String email);
+  String validateToken(String token);
 }

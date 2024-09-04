@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RequestMapping("${spring.application.name}/v1/password/request")
 @Tag(
@@ -42,7 +43,7 @@ public interface IPasswordRequestController {
   )
   @PostMapping("/forgot")
   ResponseEntity<GeneralResponse<String>> createPasswordRequest(
-    @RequestBody
+    @RequestParam
     @NotBlank
     @Email
     String email);

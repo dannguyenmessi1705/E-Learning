@@ -21,6 +21,7 @@ import com.didan.elearning.users.repository.RoleRepository;
 import com.didan.elearning.users.repository.StudentDetailsRepository;
 import com.didan.elearning.users.repository.UserRepository;
 import com.didan.elearning.users.repository.UserRolesRepository;
+import com.didan.elearning.users.service.IPasswordRequestService;
 import com.didan.elearning.users.service.IUserService;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class UserServiceImpl implements IUserService {
   private final UserRolesRepository userRolesRepository;
   private final RoleRepository roleRepository;
   private final StudentDetailsRepository studentDetailsRepository;
+  private final IPasswordRequestService passwordRequestService;
   @Override
   public CreateUserResponseDto createUser(CreateUserRequestDto createUserRequestDto) {
     if (checkExist("email", createUserRequestDto.getEmail())) {
@@ -261,6 +263,19 @@ public class UserServiceImpl implements IUserService {
     });
     user.setIsActive(CheckBoolean.FALSE);
     userRepository.save(user);
+    return true;
+  }
+
+  @Override
+  public boolean changePassword(String token, String newPassword) {
+    String userId = passwordRequestService.validateToken(token);
+    User user = userRepository.findById(userId).orElseThrow(() -> {
+      log.info(MessageConstant.USER_NOT_FOUND);
+      return new ResourceNotFoundException(MessageConstant.USER_NOT_FOUND);
+    });
+    user.setPassword(newPassword);
+    userRepository.save(user);
+    log.info("Password changed successfully for userId: {}", userId);
     return true;
   }
 }
