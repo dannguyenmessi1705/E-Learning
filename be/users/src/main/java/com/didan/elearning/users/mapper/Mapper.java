@@ -1,5 +1,8 @@
 package com.didan.elearning.users.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 
@@ -28,5 +31,17 @@ public class Mapper {
   public static <S, D> D map(S source, D destination) {
     modelMapper.map(source, destination);
     return destination;
+  }
+
+  /**
+    * Maps the iterable source to the list of destination objects.
+    * @param source the source object
+    * @param outCLass the destination class
+    * @return the list of destination objects
+  */
+  public static <S, D> List<D> mapList(Iterable<S> source, Class<D> outCLass) {
+    return StreamSupport.stream(source.spliterator(), false)
+      .map(element -> map(element, outCLass))
+      .toList();
   }
 }

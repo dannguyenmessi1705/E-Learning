@@ -7,7 +7,9 @@ import com.didan.elearning.users.dto.request.CreateUserRequestDto;
 import com.didan.elearning.users.dto.request.UpdateUserRequestDto;
 import com.didan.elearning.users.dto.response.CreateUserResponseDto;
 import com.didan.elearning.users.dto.response.GeneralResponse;
+import com.didan.elearning.users.dto.response.RoleResponseDto;
 import com.didan.elearning.users.dto.response.UpdateUserDetailResponseDto;
+import com.didan.elearning.users.entity.Role;
 import com.didan.elearning.users.service.IUserService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -29,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserControllerImpl implements IUserController {
   private final IUserService userService;
   @Override
-  public ResponseEntity<GeneralResponse<CreateUserResponseDto>> createUser(@Valid @RequestBody CreateUserRequestDto createUserRequestDto) {
+  public ResponseEntity<GeneralResponse<CreateUserResponseDto>> createUser(CreateUserRequestDto createUserRequestDto) {
     log.info("Creating user...");
     CreateUserResponseDto newUser = userService.createUser(createUserRequestDto);
     return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.CREATED.value(),
@@ -37,39 +39,27 @@ public class UserControllerImpl implements IUserController {
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<UpdateUserDetailResponseDto>> updateUser(@PathVariable("id") String userId, @Valid @RequestBody UpdateUserRequestDto updateUserRequestDto) {
+  public ResponseEntity<GeneralResponse<UpdateUserDetailResponseDto>> updateUser(String userId, UpdateUserRequestDto updateUserRequestDto) {
     log.info("Updating user...");
     UpdateUserDetailResponseDto updatedUser = userService.updateUser(userId, updateUserRequestDto);
     return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(),
-        "Updated user successfully", updatedUser), HttpStatus.OK);
+        MessageConstant.USER_UPDATED_SUCCESSFULLY, updatedUser), HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<String>> assignRole(String userId, String roleName) {
+  public ResponseEntity<GeneralResponse<RoleResponseDto>> assignRole(String userId, String roleName) {
     log.info("Assigning role...");
-    if (userService.assignRole(userId, roleName.toUpperCase())) {
-      log.info("Role {} assigned successfully for userId: {}", roleName, userId);
-      return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(),
-          "Role " + roleName + " assigned successfully", "userId: " + userId), HttpStatus.OK);
-    } else {
-      log.info("Role {} not assigned for userId: {}", roleName, userId);
-      return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.BAD_REQUEST.value(),
-          "Role " + roleName + " not assigned", "userId: " + userId), HttpStatus.BAD_REQUEST);
-    }
+    RoleResponseDto roleResponseDto = userService.assignRole(userId, roleName.toUpperCase());
+    return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(),
+        MessageConstant.ROLE_ASSIGNED_SUCCESSFULLY, roleResponseDto), HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<String>> unassignRole(String userId, String roleName) {
+  public ResponseEntity<GeneralResponse<RoleResponseDto>> unassignRole(String userId, String roleName) {
     log.info("Unassigning role...");
-    if (userService.unassignRole(userId, roleName.toUpperCase())) {
-      log.info("Role {} unassigned successfully for userId: {}", roleName, userId);
-      return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(),
-          "Role " + roleName + " unassigned successfully", "userId: " + userId), HttpStatus.OK);
-    } else {
-      log.info("Role {} not unassigned for userId: {}", roleName, userId);
-      return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.BAD_REQUEST.value(),
-          "Role " + roleName + " not unassigned", "userId: " + userId), HttpStatus.BAD_REQUEST);
-    }
+    RoleResponseDto roleResponseDto = userService.unassignRole(userId, roleName.toUpperCase());
+    return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(),
+        MessageConstant.ROLE_UNASSIGNED_SUCCESSFULLY, roleResponseDto), HttpStatus.OK);
   }
 
   @Override
@@ -78,11 +68,11 @@ public class UserControllerImpl implements IUserController {
     if (userService.deleteUser(userId)) {
       log.info("User deleted successfully: {}", userId);
       return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(),
-          "User deleted successfully", "userId: " + userId), HttpStatus.OK);
+          MessageConstant.USER_DELETED_SUCCESSFULLY, "userId: " + userId), HttpStatus.OK);
     } else {
       log.info("User not deleted: {}", userId);
       return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.BAD_REQUEST.value(),
-          "User can not deleted", "userId: " + userId), HttpStatus.BAD_REQUEST);
+          MessageConstant.USER_CANNOT_BE_DELETED, "userId: " + userId), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -93,11 +83,11 @@ public class UserControllerImpl implements IUserController {
     if (users.isEmpty()) {
       log.info("No user found for search value: {}", searchValue);
       return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.NOT_FOUND.value(),
-          "No user found for search value: " + searchValue, users), HttpStatus.NOT_FOUND);
+          MessageConstant.USER_NOT_FOUND, users), HttpStatus.NOT_FOUND);
     } else {
       log.info("Users found for search value: {}", searchValue);
       return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(),
-          "Users found for search value: " + searchValue, users), HttpStatus.OK);
+          MessageConstant.USER_FOUND, users), HttpStatus.OK);
     }
   }
 
@@ -106,7 +96,7 @@ public class UserControllerImpl implements IUserController {
       String userId) {
     UpdateUserDetailResponseDto user = userService.getUserDetails(userId);
     return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(),
-        "User details found", user), HttpStatus.OK);
+        MessageConstant.USER_FOUND, user), HttpStatus.OK);
   }
 
   @Override
@@ -114,11 +104,11 @@ public class UserControllerImpl implements IUserController {
     if (userService.activateUser(userId)) {
       log.info("User activated successfully: {}", userId);
       return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(),
-          "User activated successfully", "userId: " + userId), HttpStatus.OK);
+          MessageConstant.USER_ACTIVATED_SUCCESSFULLY, "userId: " + userId), HttpStatus.OK);
     } else {
       log.info("User not activated: {}", userId);
       return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.BAD_REQUEST.value(),
-          "User can not activated", "userId: " + userId), HttpStatus.BAD_REQUEST);
+          MessageConstant.USER_ACTIVATION_FAILED, "userId: " + userId), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -127,11 +117,11 @@ public class UserControllerImpl implements IUserController {
     if (userService.deactivateUser(userId)) {
       log.info("User deactivated successfully: {}", userId);
       return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(),
-          "User deactivated successfully", "userId: " + userId), HttpStatus.OK);
+          MessageConstant.USER_DEACTIVATED_SUCCESSFULLY, "userId: " + userId), HttpStatus.OK);
     } else {
       log.info("User not deactivated: {}", userId);
       return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.BAD_REQUEST.value(),
-          "User can not deactivated", "userId: " + userId), HttpStatus.BAD_REQUEST);
+          MessageConstant.USER_DEACTIVATION_FAILED, "userId: " + userId), HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -141,11 +131,11 @@ public class UserControllerImpl implements IUserController {
     if (userService.changePassword(changePasswordRequestDto.getToken(), changePasswordRequestDto.getPassword())) {
       log.info("Password changed successfully");
       return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(),
-          "Password changed successfully", ""), HttpStatus.OK);
+          MessageConstant.PASSWORD_CHANGED_SUCCESSFULLY, ""), HttpStatus.OK);
     } else {
       log.info("Password not changed");
       return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.BAD_REQUEST.value(),
-          "Password can not changed", ""), HttpStatus.BAD_REQUEST);
+          MessageConstant.PASSWORD_CANNOT_BE_CHANGED, ""), HttpStatus.BAD_REQUEST);
     }
   }
 }

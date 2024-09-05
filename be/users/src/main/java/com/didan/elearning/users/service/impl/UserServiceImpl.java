@@ -7,6 +7,7 @@ import com.didan.elearning.users.constant.RoleConstants;
 import com.didan.elearning.users.dto.request.CreateUserRequestDto;
 import com.didan.elearning.users.dto.request.UpdateUserRequestDto;
 import com.didan.elearning.users.dto.response.CreateUserResponseDto;
+import com.didan.elearning.users.dto.response.RoleResponseDto;
 import com.didan.elearning.users.dto.response.UpdateUserDetailResponseDto;
 import com.didan.elearning.users.entity.Role;
 import com.didan.elearning.users.entity.StudentDetails;
@@ -181,23 +182,29 @@ public class UserServiceImpl implements IUserService {
   }
 
   @Override
-  public boolean assignRole(String userId, String roleName) {
+  public RoleResponseDto assignRole(String userId, String roleName) {
     User user = userRepository.findById(userId).orElseThrow(() -> {
       log.info(MessageConstant.USER_NOT_FOUND);
       return new ResourceNotFoundException(MessageConstant.USER_NOT_FOUND);
     });
     setRoleUser(user, roleName);
-    return true;
+    RoleResponseDto resRole = new RoleResponseDto();
+    resRole.setRoleName(roleName);
+    resRole.setUserId(userId);
+    return resRole;
   }
 
   @Override
-  public boolean unassignRole(String userId, String roleName) {
+  public RoleResponseDto unassignRole(String userId, String roleName) {
     User user = userRepository.findById(userId).orElseThrow(() -> {
       log.info(MessageConstant.USER_NOT_FOUND);
       return new ResourceNotFoundException(MessageConstant.USER_NOT_FOUND);
     });
     unSetRoleUser(user, roleName);
-    return true;
+    RoleResponseDto resRole = new RoleResponseDto();
+    resRole.setRoleName(roleName);
+    resRole.setUserId(userId);
+    return resRole;
   }
 
   @Override

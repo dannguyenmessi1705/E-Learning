@@ -20,7 +20,7 @@ import lombok.ToString;
 public class UserNotifications extends SuperClass{
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private String notification_id;
+  private String notificationId;
 
   @Column
   private String message;
@@ -29,7 +29,7 @@ public class UserNotifications extends SuperClass{
   private String isRead;
 
   @ManyToOne
-  @JoinColumn(name = "user_id", insertable = false, updatable = false)
+  @JoinColumn(name = "user_id", updatable = false)
   private User user;
 
   @PrePersist

@@ -6,6 +6,7 @@ import com.didan.elearning.users.dto.request.CreateUserRequestDto;
 import com.didan.elearning.users.dto.request.UpdateUserRequestDto;
 import com.didan.elearning.users.dto.response.CreateUserResponseDto;
 import com.didan.elearning.users.dto.response.GeneralResponse;
+import com.didan.elearning.users.dto.response.RoleResponseDto;
 import com.didan.elearning.users.dto.response.UpdateUserDetailResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -99,7 +100,7 @@ public interface IUserController {
       }
   )
   @PatchMapping("/assign-role/{id}")
-  ResponseEntity<GeneralResponse<String>> assignRole(@PathVariable("id") String userId, @RequestParam("role") String roleName);
+  ResponseEntity<GeneralResponse<RoleResponseDto>> assignRole(@PathVariable("id") String userId, @RequestParam("role") String roleName);
 
   @Operation(
       summary = "Unassign a role from a user",
@@ -122,7 +123,7 @@ public interface IUserController {
       }
   )
   @PatchMapping("/unassign-role/{id}")
-  ResponseEntity<GeneralResponse<String>> unassignRole(@PathVariable("id") String userId, @RequestParam("role") String roleName);
+  ResponseEntity<GeneralResponse<RoleResponseDto>> unassignRole(@PathVariable("id") String userId, @RequestParam("role") String roleName);
 
   @Operation(
       summary = "Delete a user",
