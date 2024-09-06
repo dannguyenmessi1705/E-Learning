@@ -11,6 +11,4 @@ public interface IUserNotificationsService {
     void deleteNotification(String notificationId);
     void deleteAllNotifications(String userId);
     List<NotificationResponseDto> getNotifications(String userId);
-    void getUnreadNotifications(String userId);
-    void getReadNotifications(String userId);
 }

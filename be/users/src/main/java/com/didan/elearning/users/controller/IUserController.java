@@ -41,7 +41,8 @@ public interface IUserController {
               responseCode = "201",
               description = "Created user successfully",
               content = @Content(
-                  schema = @Schema(implementation = GeneralResponse.class)
+                  schema = @Schema(implementation = GeneralResponse.class, type = "object", oneOf = {
+                      CreateUserResponseDto.class})
               )
           ),
           @ApiResponse(

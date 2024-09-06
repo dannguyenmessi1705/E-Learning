@@ -1,18 +1,17 @@
-package com.didan.elearning.users.mapper;
+package com.didan.elearning.users.utils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 
-public class Mapper {
+public class MapperUtils {
   private static final ModelMapper modelMapper;
   static {
     modelMapper = new ModelMapper();
     modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
   }
-  private Mapper() {}
+  private MapperUtils() {}
   /**
     * Maps the entity to the DTO.
     * @param entity the entity to map

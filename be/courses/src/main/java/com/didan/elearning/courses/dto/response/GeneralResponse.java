@@ -1,13 +1,13 @@
-package com.didan.elearning.users.dto.response;
+package com.didan.elearning.courses.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 
-@AllArgsConstructor @NoArgsConstructor @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 @Schema(
     name = "GeneralResponse",
     description = "The general response body"

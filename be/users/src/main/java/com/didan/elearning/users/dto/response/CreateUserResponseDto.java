@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor @NoArgsConstructor @Data
 @Schema(
-    name = "CreateUser",
+    name = "CreateUserResponse",
     description = "The user creation request body"
 )
 public class CreateUserResponseDto{

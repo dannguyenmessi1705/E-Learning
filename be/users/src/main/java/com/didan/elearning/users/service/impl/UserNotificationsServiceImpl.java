@@ -7,7 +7,7 @@ import com.didan.elearning.users.dto.response.NotificationResponseDto;
 import com.didan.elearning.users.entity.User;
 import com.didan.elearning.users.entity.UserNotifications;
 import com.didan.elearning.users.exception.ResourceNotFoundException;
-import com.didan.elearning.users.mapper.Mapper;
+import com.didan.elearning.users.utils.MapperUtils;
 import com.didan.elearning.users.repository.UserNotificationsRepository;
 import com.didan.elearning.users.repository.UserRepository;
 import com.didan.elearning.users.service.IUserNotificationsService;
@@ -32,7 +32,7 @@ public class UserNotificationsServiceImpl implements IUserNotificationsService {
     notification.setUser(user);
     notification.setMessage(notificationRequestDto.getMessage());
     userNotificationsRepository.save(notification);
-    NotificationResponseDto response = Mapper.map(notification, NotificationResponseDto.class);
+    NotificationResponseDto response = MapperUtils.map(notification, NotificationResponseDto.class);
     response.setUserId(notificationRequestDto.getUserId());
     log.info(MessageConstant.NOTIFICATION_CREATED_SUCCESSFULLY + ": {}", response);
     return response;
@@ -46,7 +46,7 @@ public class UserNotificationsServiceImpl implements IUserNotificationsService {
     });
     notification.setIsRead(CheckBoolean.TRUE);
     userNotificationsRepository.save(notification);
-    NotificationResponseDto response = Mapper.map(notification, NotificationResponseDto.class);
+    NotificationResponseDto response = MapperUtils.map(notification, NotificationResponseDto.class);
     response.setUserId(notification.getUser().getUserId());
     log.info(MessageConstant.NOTIFICATION_MARKED_AS_READ + " - {}", notificationId);
     return response;
@@ -91,16 +91,9 @@ public class UserNotificationsServiceImpl implements IUserNotificationsService {
       return new ResourceNotFoundException(MessageConstant.USER_NOT_FOUND + " - " + userId);
     });
     List<UserNotifications> notifications = userNotificationsRepository.findUserNotificationsByUser_UserId(userId);
-    return Mapper.mapList(notifications, NotificationResponseDto.class);
-  }
-
-  @Override
-  public void getUnreadNotifications(String userId) {
-
-  }
-
-  @Override
-  public void getReadNotifications(String userId) {
-
+    List<NotificationResponseDto> responseDtoList = MapperUtils.mapList(notifications, NotificationResponseDto.class);
+    responseDtoList.forEach(notification -> notification.setUserId(userId));
+    log.info(MessageConstant.NOTIFICATIONS_RETRIEVED_SUCCESSFULLY + " - {}", userId);
+    return responseDtoList;
   }
 }

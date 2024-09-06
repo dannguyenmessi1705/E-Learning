@@ -16,8 +16,8 @@ import com.didan.elearning.users.entity.UserRoles;
 import com.didan.elearning.users.entity.key.UserRoleId;
 import com.didan.elearning.users.exception.FieldErrorException;
 import com.didan.elearning.users.exception.ResourceNotFoundException;
-import com.didan.elearning.users.exception.UserAlreadyExistException;
-import com.didan.elearning.users.mapper.Mapper;
+import com.didan.elearning.users.exception.ResourceAlreadyExistException;
+import com.didan.elearning.users.utils.MapperUtils;
 import com.didan.elearning.users.repository.RoleRepository;
 import com.didan.elearning.users.repository.StudentDetailsRepository;
 import com.didan.elearning.users.repository.UserRepository;
@@ -31,7 +31,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @Service
 @AllArgsConstructor
@@ -46,17 +45,17 @@ public class UserServiceImpl implements IUserService {
   public CreateUserResponseDto createUser(CreateUserRequestDto createUserRequestDto) {
     if (checkExist("email", createUserRequestDto.getEmail())) {
       log.info(MessageConstant.EMAIL_ALREADY_EXISTS);
-      throw new UserAlreadyExistException(MessageConstant.EMAIL_ALREADY_EXISTS);
+      throw new ResourceAlreadyExistException(MessageConstant.EMAIL_ALREADY_EXISTS);
     } else if (checkExist("username", createUserRequestDto.getUsername())) {
       log.info(MessageConstant.USERNAME_ALREADY_EXISTS);
-      throw new UserAlreadyExistException(MessageConstant.USERNAME_ALREADY_EXISTS);
+      throw new ResourceAlreadyExistException(MessageConstant.USERNAME_ALREADY_EXISTS);
     } else if (checkExist("phoneNumber", createUserRequestDto.getPhoneNumber())) {
       log.info(MessageConstant.PHONE_NUMBER_ALREADY_EXISTS);
-      throw new UserAlreadyExistException(MessageConstant.PHONE_NUMBER_ALREADY_EXISTS);
+      throw new ResourceAlreadyExistException(MessageConstant.PHONE_NUMBER_ALREADY_EXISTS);
     }
-    User user = Mapper.map(createUserRequestDto, User.class);
+    User user = MapperUtils.map(createUserRequestDto, User.class);
     userRepository.save(user);
-    CreateUserResponseDto resUser = Mapper.map(user, CreateUserResponseDto.class);
+    CreateUserResponseDto resUser = MapperUtils.map(user, CreateUserResponseDto.class);
     log.info(MessageConstant.USER_CREATED_SUCCESSFULLY + ": {}", resUser);
     return resUser;
   }
@@ -70,25 +69,25 @@ public class UserServiceImpl implements IUserService {
       return new ResourceNotFoundException(MessageConstant.USER_NOT_FOUND);
     });
 
-    StudentDetails mappedStudent = Mapper.map(updateUserRequestDto, StudentDetails.class);
+    StudentDetails mappedStudent = MapperUtils.map(updateUserRequestDto, StudentDetails.class);
     if (StringUtils.hasText(updateUserRequestDto.getEmail())) {
       if (checkExist("email", updateUserRequestDto.getEmail())) {
         log.info(MessageConstant.EMAIL_ALREADY_EXISTS);
-        throw new UserAlreadyExistException(MessageConstant.EMAIL_ALREADY_EXISTS);
+        throw new ResourceAlreadyExistException(MessageConstant.EMAIL_ALREADY_EXISTS);
       }
       user.setEmail(updateUserRequestDto.getEmail());
     }
     if (StringUtils.hasText(updateUserRequestDto.getUsername())) {
       if (checkExist("username", updateUserRequestDto.getUsername())) {
         log.info("Username already exists");
-        throw new UserAlreadyExistException("Username already exists");
+        throw new ResourceAlreadyExistException("Username already exists");
       }
       user.setUsername(updateUserRequestDto.getUsername());
     }
     if (StringUtils.hasText(updateUserRequestDto.getPhoneNumber())) {
       if (checkExist("phoneNumber", updateUserRequestDto.getPhoneNumber())) {
         log.info("Phone number already exists");
-        throw new UserAlreadyExistException("Phone number already exists");
+        throw new ResourceAlreadyExistException("Phone number already exists");
       }
       user.setPhoneNumber(updateUserRequestDto.getPhoneNumber());
     }
@@ -127,8 +126,8 @@ public class UserServiceImpl implements IUserService {
       }
     }
     userRepository.save(user);
-    UpdateUserDetailResponseDto resUser = Mapper.map(user, UpdateUserDetailResponseDto.class);
-    resUser = Mapper.map(mappedStudent, resUser);
+    UpdateUserDetailResponseDto resUser = MapperUtils.map(user, UpdateUserDetailResponseDto.class);
+    resUser = MapperUtils.map(mappedStudent, resUser);
     log.info("User updated successfully, {}", resUser);
     return resUser;
   }
@@ -149,7 +148,7 @@ public class UserServiceImpl implements IUserService {
     });
     if (user.getRoles().stream().anyMatch(userRoles -> userRoles.getRole().getRoleName().equals(roleName))) {
       log.info(MessageConstant.USER_ALREADY_HAS_ROLE + " " + roleName);
-      throw new UserAlreadyExistException(MessageConstant.USER_ALREADY_HAS_ROLE + " " + roleName);
+      throw new ResourceAlreadyExistException(MessageConstant.USER_ALREADY_HAS_ROLE + " " + roleName);
     }
     UserRoles userRoles = new UserRoles();
     userRoles.setUserRoleId(new UserRoleId(user.getUserId(), role.getRoleId()));
@@ -162,7 +161,7 @@ public class UserServiceImpl implements IUserService {
     });
     if (user.getRoles().stream().noneMatch(userRoles -> userRoles.getRole().getRoleName().equals(roleName))) {
       log.info(MessageConstant.USER_DOES_NOT_HAVE_ROLE + " " + roleName);
-      throw new UserAlreadyExistException(MessageConstant.USER_DOES_NOT_HAVE_ROLE + " " + roleName);
+      throw new ResourceAlreadyExistException(MessageConstant.USER_DOES_NOT_HAVE_ROLE + " " + roleName);
     }
     user.getRoles().removeIf(userRoles -> userRoles.getRole().getRoleName().equals(roleName));
     userRepository.save(user);
@@ -232,7 +231,7 @@ public class UserServiceImpl implements IUserService {
     List<UpdateUserDetailResponseDto> resUsers = new ArrayList<>();
     log.info("Start mapping...");
     for (User user : users) {
-      resUsers.add(Mapper.map(user, UpdateUserDetailResponseDto.class));
+      resUsers.add(MapperUtils.map(user, UpdateUserDetailResponseDto.class));
     }
     log.info("Completed search for: {}", searchValue);
     return resUsers;
@@ -245,8 +244,8 @@ public class UserServiceImpl implements IUserService {
       log.info(MessageConstant.USER_NOT_FOUND);
       return new ResourceNotFoundException(MessageConstant.USER_NOT_FOUND);
     });
-    UpdateUserDetailResponseDto resUser = Mapper.map(user, UpdateUserDetailResponseDto.class);
-    resUser = Mapper.map(user.getStudentDetails(), resUser);
+    UpdateUserDetailResponseDto resUser = MapperUtils.map(user, UpdateUserDetailResponseDto.class);
+    resUser = MapperUtils.map(user.getStudentDetails(), resUser);
     log.info("User found: {}", resUser);
     return resUser;
   }

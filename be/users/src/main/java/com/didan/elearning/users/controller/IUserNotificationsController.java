@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -117,7 +118,7 @@ public interface IUserNotificationsController {
       }
   )
   @DeleteMapping("/delete/{notificationId}")
-  ResponseEntity<GeneralResponse<NotificationResponseDto>> deleteNotification(@NotBlank @PathVariable("notificationId") String notificationId);
+  ResponseEntity<GeneralResponse<String>> deleteNotification(@NotBlank @PathVariable("notificationId") String notificationId);
 
   @Operation(
       summary = "Delete all notifications",
@@ -163,5 +164,5 @@ public interface IUserNotificationsController {
       }
   )
   @GetMapping("/get/{userId}")
-  ResponseEntity<GeneralResponse<String>> getNotifications(@NotBlank @PathVariable("userId") String userId);
+  ResponseEntity<GeneralResponse<List<NotificationResponseDto>>> getNotifications(@NotBlank @PathVariable("userId") String userId);
 }

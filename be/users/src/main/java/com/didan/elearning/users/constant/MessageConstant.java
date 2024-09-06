@@ -28,10 +28,14 @@ public class MessageConstant {
   public static final String NOTIFICATION_READ_SUCCESSFULLY = "Notification read successfully";
   public static final String NOTIFICATIONS_READ_SUCCESSFULLY = "All notifications read successfully";
   public static final String NOTIFICATION_DELETED_SUCCESSFULLY = "Notification deleted successfully";
+  public static final String NOTIFICATIONS_DELETED_SUCCESSFULLY = "All notifications deleted successfully";
+  public static final String NOTIFICATIONS_RETRIEVED_SUCCESSFULLY= "All notifications retrieved successfully";
   public static final String ROLE_CREATED_SUCCESSFULLY = "Role created successfully";
   public static final String ROLE_UPDATED_SUCCESSFULLY = "Role updated successfully";
   public static final String ROLE_DELETED_SUCCESSFULLY = "Role deleted successfully";
   public static final String ROLE_ASSIGNED_SUCCESSFULLY = "Role assigned successfully";
   public static final String ROLE_UNASSIGNED_SUCCESSFULLY = "Role unassigned successfully";
+  public static final String ACTIVITY_CREATED_SUCCESSFULLY = "Activity created successfully";
+  public static final String ACTIVITIES_RETRIEVED_SUCCESSFULLY = "Activities retrieved successfully";
   private MessageConstant(){}
 }

@@ -1,6 +1,6 @@
-package com.didan.elearning.users.exception;
+package com.didan.elearning.courses.exception;
 
-import com.didan.elearning.users.dto.error.ErrorDto;
+import com.didan.elearning.courses.dto.error.ErrorDto;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;

@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -27,10 +28,10 @@ public class Semester extends SuperClass {
   @Column
   private String name;
   @Column
-  private Date startDate;
+  private LocalDate startDate;
   @Column
-  private Date endDate;
-  @OneToMany(mappedBy = "semester", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+  private LocalDate endDate;
+  @OneToMany(mappedBy = "semester", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
   private List<Course> courses;
 
 }

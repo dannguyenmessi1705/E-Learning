@@ -6,6 +6,7 @@ import com.didan.elearning.users.dto.request.CreateNotificationRequestDto;
 import com.didan.elearning.users.dto.response.GeneralResponse;
 import com.didan.elearning.users.dto.response.NotificationResponseDto;
 import com.didan.elearning.users.service.IUserNotificationsService;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ public class UserNotificationsControllerImpl implements IUserNotificationsContro
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<NotificationResponseDto>> deleteNotification(
+  public ResponseEntity<GeneralResponse<String>> deleteNotification(
       String notificationId) {
     log.info("Deleting notification...");
     userNotificationsService.deleteNotification(notificationId);
@@ -51,11 +52,15 @@ public class UserNotificationsControllerImpl implements IUserNotificationsContro
 
   @Override
   public ResponseEntity<GeneralResponse<String>> deleteAllNotifications(String userId) {
-    return null;
+    log.info("Deleting all notifications...");
+    userNotificationsService.deleteAllNotifications(userId);
+    return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(), MessageConstant.NOTIFICATIONS_DELETED_SUCCESSFULLY, "userId: " + userId), HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<String>> getNotifications(String userId) {
-    return null;
+  public ResponseEntity<GeneralResponse<List<NotificationResponseDto>>> getNotifications(String userId) {
+    log.info("Getting notifications...");
+    List<NotificationResponseDto> notifications = userNotificationsService.getNotifications(userId);
+    return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(), MessageConstant.NOTIFICATIONS_RETRIEVED_SUCCESSFULLY, notifications), HttpStatus.OK);
   }
 }
