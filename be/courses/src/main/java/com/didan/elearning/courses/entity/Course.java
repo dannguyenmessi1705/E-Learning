@@ -11,13 +11,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@NoArgsConstructor @AllArgsConstructor @Getter @Setter @ToString
+@NoArgsConstructor @AllArgsConstructor @Getter @Setter @ToString @Builder
 public class Course extends SuperClass {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -25,12 +26,13 @@ public class Course extends SuperClass {
   @Column(unique = true)
   private String courseCode;
   @Column
-  private String title;
+  private String courseName;
+  @Column
+  private Integer credit;
   @Column
   private String description;
-  @ManyToOne
-  @JoinColumn(name = "semester_id")
-  private Semester semester;
+  @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+  private List<SemestersCourses> semestersCourses;
   @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
   private List<CourseClasses> courseClasses;
 }

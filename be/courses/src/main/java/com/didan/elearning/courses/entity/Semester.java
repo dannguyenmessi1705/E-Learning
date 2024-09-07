@@ -9,22 +9,22 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@NoArgsConstructor @AllArgsConstructor @Getter @Setter @ToString
+@NoArgsConstructor @AllArgsConstructor @Getter @Setter @ToString @Builder
 public class Semester extends SuperClass {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String semesterId;
   @Column(unique = true)
-  private String semseterCode;
+  private String semesterCode;
   @Column
   private String name;
   @Column
@@ -32,6 +32,6 @@ public class Semester extends SuperClass {
   @Column
   private LocalDate endDate;
   @OneToMany(mappedBy = "semester", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-  private List<Course> courses;
+  private List<SemestersCourses> semestersCourses;
 
 }
