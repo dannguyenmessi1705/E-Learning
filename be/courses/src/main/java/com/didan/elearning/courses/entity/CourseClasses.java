@@ -28,7 +28,7 @@ public class CourseClasses extends SuperClass {
   @Column
   private String assistantId;
   @Column
-  private String schedule;
+  private String className;
   @Column
   private Integer capacity;
   @ManyToOne

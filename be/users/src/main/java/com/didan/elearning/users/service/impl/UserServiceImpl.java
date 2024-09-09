@@ -114,6 +114,7 @@ public class UserServiceImpl implements IUserService {
 
     if (StringUtils.hasText(updateUserRequestDto.getMajor()) || StringUtils.hasText(String.valueOf(updateUserRequestDto.getStartYear()))) {
       Optional<StudentDetails> studentDetails = studentDetailsRepository.findFirstByUser_UserId(userId);
+      String studentCode = null;
       if (studentDetails.isEmpty()) {
         mappedStudent.setStudentCode(setStudentCode(updateUserRequestDto.getMajor(), updateUserRequestDto.getStartYear()));
         mappedStudent.setUserId(userId);
@@ -167,15 +168,15 @@ public class UserServiceImpl implements IUserService {
     userRepository.save(user);
   }
   public String setStudentCode(String major, int startYear) {
-    int random = (int) (Math.random() * 1000);
+    int random = (int) (Math.random() * 999) + 1;
     String[] majorSplit = major.split("\\s+");
     StringBuilder majorCode = new StringBuilder();
     for (String s : majorSplit) {
       majorCode.append(s.charAt(0));
     }
-    String studentCode = "D" + startYear + majorCode + random;
+    String studentCode = "D" + startYear + majorCode + String.format("%03d", random);
     while (checkExist("studentCode", studentCode)) {
-      studentCode = "D" + startYear + majorCode.toString().toUpperCase() + random;
+      studentCode = "D" + startYear + majorCode.toString().toUpperCase() + String.format("%03d", random);
     }
     return studentCode;
   }

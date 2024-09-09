@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CourseRepository extends JpaRepository<Course, String> {
   Optional<Course> findCourseByCourseCodeIgnoreCase(String courseCode);
+  Boolean existsByCourseCodeIgnoreCase(String courseCode);
 }
