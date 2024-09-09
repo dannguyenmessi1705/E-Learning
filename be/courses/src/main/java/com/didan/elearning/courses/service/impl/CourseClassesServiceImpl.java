@@ -2,6 +2,7 @@ package com.didan.elearning.courses.service.impl;
 
 import com.didan.elearning.courses.constants.MessageConstants;
 import com.didan.elearning.courses.dto.request.ClassRequestDto;
+import com.didan.elearning.courses.dto.request.ClassUpdateRequestDto;
 import com.didan.elearning.courses.dto.response.ClassResponseDto;
 import com.didan.elearning.courses.entity.Course;
 import com.didan.elearning.courses.entity.CourseClasses;
@@ -10,10 +11,13 @@ import com.didan.elearning.courses.repository.CourseClassesRepository;
 import com.didan.elearning.courses.repository.CourseRepository;
 import com.didan.elearning.courses.service.ICourseClassesService;
 import com.didan.elearning.courses.utils.MapperUtils;
+import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 @AllArgsConstructor
@@ -71,33 +75,103 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
   }
 
   @Override
-  public List<CourseClasses> getAllClassesByInstructor(String instructorId) {
-    return List.of();
+  public List<ClassResponseDto> getAllClassesByInstructor(String instructorId) {
+    List<CourseClasses> courseClasses = courseClassesRepository.findCourseClassesByInstructorIdIgnoreCase(instructorId);
+    if (courseClasses.isEmpty()) {
+      log.error("No classes found for instructor with ID {}", instructorId);
+      return List.of();
+    }
+    List<ClassResponseDto> response = new ArrayList<>();
+    for (CourseClasses courseClass : courseClasses) {
+      ClassResponseDto classResponseDto = MapperUtils.map(courseClass, ClassResponseDto.class);
+      classResponseDto.setCourseCode(courseClass.getCourse().getCourseCode());
+      response.add(classResponseDto);
+    }
+    return response;
   }
 
   @Override
-  public List<CourseClasses> getAllClassesByAssistant(String assistantId) {
-    return List.of();
+  public List<ClassResponseDto> getAllClassesByAssistant(String assistantId) {
+    List<CourseClasses> courseClasses = courseClassesRepository.findCourseClassesByAssistantIdIgnoreCase(assistantId);
+    if (courseClasses.isEmpty()) {
+      log.error("No classes found for assistant with ID {}", assistantId);
+      return List.of();
+    }
+    List<ClassResponseDto> response = new ArrayList<>();
+    for (CourseClasses courseClass : courseClasses) {
+      ClassResponseDto classResponseDto = MapperUtils.map(courseClass, ClassResponseDto.class);
+      classResponseDto.setCourseCode(courseClass.getCourse().getCourseCode());
+      response.add(classResponseDto);
+    }
+    return response;
   }
 
   @Override
-  public CourseClasses getClassByCode(String classCode) {
-    return null;
+  public ClassResponseDto getClassByCode(String classCode) {
+    CourseClasses courseClass = courseClassesRepository.findCourseClassesByClassCodeIgnoreCase(classCode)
+        .orElseThrow(() -> {
+          log.error("Class with code {} not found", classCode);
+          return new ResourceNotFoundException(String.format(MessageConstants.CLASS_NOT_FOUND, classCode));
+        });
+    return MapperUtils.map(courseClass, ClassResponseDto.class);
   }
 
   @Override
-  public void addClassToCourse(String courseCode, CourseClasses courseClasses) {
-
+  @Transactional
+  public ClassResponseDto updateCourseClasses(ClassUpdateRequestDto classUpdateRequestDto) {
+    CourseClasses courseClass = courseClassesRepository.findCourseClassesByClassCodeIgnoreCase(classUpdateRequestDto.getClassCode())
+        .orElseThrow(() -> {
+          log.error("Class with code {} not found", classUpdateRequestDto.getClassCode());
+          return new ResourceNotFoundException(String.format(MessageConstants.CLASS_NOT_FOUND, classUpdateRequestDto.getClassCode()));
+        });
+    if (StringUtils.hasText(classUpdateRequestDto.getInstructorId())) {
+      /**
+       * OpenFeint to UserService to get instructor
+       * Instructor instructor = userService.getInstructorById(classUpdate
+       * RequestDto.getInstructorId());
+       * if (instructor == null) {
+       * throw new ResourceNotFoundException("Instructor not found");
+       * }
+       */
+    }
+    if (StringUtils.hasText(classUpdateRequestDto.getAssistantId())) {
+      /**
+       * OpenFeint to UserService to get assistant
+       * Assistant assistant = userService.getAssistantById(classUpdateRequestDto.getAssistantId());
+       * if (assistant == null) {
+       * throw new ResourceNotFoundException("Assistant not found");
+       * }
+       */
+    }
+    if (StringUtils.hasText(classUpdateRequestDto.getClassName())) {
+      courseClass.setClassName(classUpdateRequestDto.getClassName());
+    }
+    if (classUpdateRequestDto.getCapacity() != null) {
+      courseClass.setCapacity(classUpdateRequestDto.getCapacity());
+    }
+    if (classUpdateRequestDto.getClassCode() != null) {
+      Course course = courseRepository.findCourseByCourseCodeIgnoreCase(classUpdateRequestDto.getCourseCode())
+          .orElseThrow(() -> {
+            log.error("Course with code {} not found", classUpdateRequestDto.getCourseCode());
+            return new ResourceNotFoundException(String.format(MessageConstants.COURSE_NOT_FOUND, classUpdateRequestDto.getCourseCode()));
+          });
+      courseClass.setCourse(course);
+    }
+    courseClassesRepository.save(courseClass);
+    log.info("Class with code {} updated successfully", classUpdateRequestDto.getClassCode());
+    return MapperUtils.map(courseClass, ClassResponseDto.class);
   }
 
   @Override
-  public void updateCourseClasses(CourseClasses courseClasses) {
-
-  }
-
-  @Override
+  @Transactional
   public void deleteCourseClasses(String classCode) {
-
+    CourseClasses courseClass = courseClassesRepository.findCourseClassesByClassCodeIgnoreCase(classCode)
+        .orElseThrow(() -> {
+          log.error("Class with code {} not found", classCode);
+          return new ResourceNotFoundException(String.format(MessageConstants.CLASS_NOT_FOUND, classCode));
+        });
+    courseClassesRepository.delete(courseClass);
+    log.info("Class with code {} deleted successfully", classCode);
   }
 
   public String setClassCode(int startYear) {
