@@ -1,8 +1,7 @@
 package com.didan.elearning.courses.controller;
 
 import com.didan.elearning.courses.dto.error.ErrorDto;
-import com.didan.elearning.courses.dto.request.ClassRequestDto;
-import com.didan.elearning.courses.dto.request.ClassUpdateRequestDto;
+import com.didan.elearning.courses.dto.request.ClassStudentRequestDto;
 import com.didan.elearning.courses.dto.response.ClassResponseDto;
 import com.didan.elearning.courses.dto.response.GeneralResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,32 +10,32 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Tag(
-    name = "Class Controller",
-    description = "Endpoints for managing classes"
-)
-@RequestMapping("${spring.application.name}/v1/classes")
+@RequestMapping("${spring.application.name}/v1/student")
 @Validated
-public interface IClassController {
+@Tag(
+    name = "Class Student Controller",
+    description = "Endpoints for managing students in classes"
+)
+public interface IClassStudentController {
   @Operation(
-      summary = "Create a class",
-      description = "Create a class for a course",
+      summary = "Add students to a class",
+      description = "Add students to a class",
       responses = {
           @ApiResponse(
               responseCode = "201",
-              description = "Course assigned to semester successfully",
+              description = "Students added to class successfully",
               content = @Content(
                   schema = @Schema(
                       implementation = GeneralResponse.class
@@ -54,16 +53,16 @@ public interface IClassController {
           )
       }
   )
-  @PostMapping("/create")
-  ResponseEntity<MappingJacksonValue> createClass(@Valid @RequestBody ClassRequestDto classRequestDto);
+  @PostMapping("/add")
+  ResponseEntity<GeneralResponse<String>> addStudentsToClass(@Valid @RequestBody ClassStudentRequestDto classStudentRequestDto);
 
   @Operation(
-      summary = "Get all classes of a course",
-      description = "Get all classes of a course",
+      summary = "Remove students from a class",
+      description = "Remove students from a class",
       responses = {
           @ApiResponse(
               responseCode = "200",
-              description = "Classes retrieved successfully",
+              description = "Students removed from class successfully",
               content = @Content(
                   schema = @Schema(
                       implementation = GeneralResponse.class
@@ -81,16 +80,16 @@ public interface IClassController {
           )
       }
   )
-  @GetMapping("/all/{courseCode}")
-  ResponseEntity<MappingJacksonValue> getClassesOfCourse(@NotEmpty(message = "Course code is required") @PathVariable("courseCode") String courseCode);
+  @DeleteMapping("/remove")
+  ResponseEntity<GeneralResponse<String>> removeStudentsFromClass(@Valid @RequestBody ClassStudentRequestDto classStudentRequestDto);
 
   @Operation(
-      summary = "Get all classes by instructor",
-      description = "Get all classes by instructor",
+      summary = "Remove all students from a class",
+      description = "Remove all students from a class",
       responses = {
           @ApiResponse(
               responseCode = "200",
-              description = "Classes retrieved successfully",
+              description = "All students removed from class successfully",
               content = @Content(
                   schema = @Schema(
                       implementation = GeneralResponse.class
@@ -108,16 +107,16 @@ public interface IClassController {
           )
       }
   )
-  @GetMapping("/instructor/{instructorId}")
-  ResponseEntity<MappingJacksonValue> getClassesByInstructor(@NotEmpty(message = "Instructor ID is required") @PathVariable("instructorId") String instructorId);
+  @DeleteMapping("/remove/all/class/{classCode}")
+  ResponseEntity<GeneralResponse<String>> removeAllStudentsFromClass(@NotBlank(message = "Class code is required") @PathVariable("classCode") String classCode);
 
   @Operation(
-      summary = "Get all classes by assistant",
-      description = "Get all classes by assistant",
+      summary = "Remove all classes of a student",
+      description = "Remove all classes of a student",
       responses = {
           @ApiResponse(
               responseCode = "200",
-              description = "Classes retrieved successfully",
+              description = "All classes of student removed successfully",
               content = @Content(
                   schema = @Schema(
                       implementation = GeneralResponse.class
@@ -135,16 +134,16 @@ public interface IClassController {
           )
       }
   )
-  @GetMapping("/assistant/{assistantId}")
-  ResponseEntity<MappingJacksonValue> getClassesByAssistant(@NotEmpty(message = "Assistant ID is required") @PathVariable("assistantId")String assistantId);
+  @DeleteMapping("/remove/all/{studentCode}")
+  ResponseEntity<GeneralResponse<String>> removeAllClassesOfStudent(@NotBlank(message = "Student code is required") @PathVariable("studentCode") String studentCode);
 
   @Operation(
-      summary = "Update a class",
-      description = "Update a class",
+      summary = "Get all classes of a student",
+      description = "Get all classes of a student",
       responses = {
           @ApiResponse(
               responseCode = "200",
-              description = "Class updated successfully",
+              description = "All classes of student retrieved successfully",
               content = @Content(
                   schema = @Schema(
                       implementation = GeneralResponse.class
@@ -162,60 +161,33 @@ public interface IClassController {
           )
       }
   )
-  @PostMapping("/update")
-  ResponseEntity<MappingJacksonValue> updateClass(@Valid @RequestBody ClassUpdateRequestDto classUpdateRequestDto);
+  @GetMapping("/get/all/{studentCode}")
+  ResponseEntity<GeneralResponse<List<ClassResponseDto>>> getAllClassesOfStudent(@NotBlank(message = "Student code is required") @PathVariable("studentCode") String studentCode);
 
-  @Operation(
-      summary = "Delete a class",
-      description = "Delete a class",
-      responses = {
-          @ApiResponse(
-              responseCode = "200",
-              description = "Class deleted successfully",
-              content = @Content(
-                  schema = @Schema(
-                      implementation = GeneralResponse.class
-                  )
-              )
-          ),
-          @ApiResponse(
-              responseCode = "500",
-              description = "Internal server error",
-              content = @Content(
-                  schema = @Schema(
-                      implementation = ErrorDto.class
-                  )
-              )
-          )
-      }
-  )
-  @DeleteMapping("/delete/{classCode}")
-  ResponseEntity<MappingJacksonValue> deleteClass(@NotEmpty(message = "Class code is required") @PathVariable("classCode") String classCode);
-
-  @Operation(
-      summary = "Get class by code",
-      description = "Get class by code",
-      responses = {
-          @ApiResponse(
-              responseCode = "200",
-              description = "Class retrieved successfully",
-              content = @Content(
-                  schema = @Schema(
-                      implementation = GeneralResponse.class
-                  )
-              )
-          ),
-          @ApiResponse(
-              responseCode = "500",
-              description = "Internal server error",
-              content = @Content(
-                  schema = @Schema(
-                      implementation = ErrorDto.class
-                  )
-              )
-          )
-      }
-  )
-  @GetMapping("/{classCode}")
-  ResponseEntity<MappingJacksonValue> getClassByCode(@NotEmpty(message = "Class code is required") @PathVariable("classCode") String classCode);
+//  @Operation(
+//      summary = "Get all students of a class",
+//      description = "Get all students of a class",
+//      responses = {
+//          @ApiResponse(
+//              responseCode = "200",
+//              description = "All students of class retrieved successfully",
+//              content = @Content(
+//                  schema = @Schema(
+//                      implementation = GeneralResponse.class
+//                  )
+//              )
+//          ),
+//          @ApiResponse(
+//              responseCode = "500",
+//              description = "Internal server error",
+//              content = @Content(
+//                  schema = @Schema(
+//                      implementation = ErrorDto.class
+//                  )
+//              )
+//          )
+//      }
+//  )
+//  @GetMapping("/get/all/class/{classCode}")
+//  ResponseEntity<GeneralResponse<List<User>>> getAllStudentsOfClass(@NotBlank(message = "Class code is required") @PathVariable("classCode") String classCode);
 }

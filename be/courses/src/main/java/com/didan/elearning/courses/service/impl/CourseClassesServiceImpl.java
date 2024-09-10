@@ -184,13 +184,10 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
   }
 
   public boolean checkExist(String field, String value) {
-    switch (field) {
-      case "classCode":
-        return courseClassesRepository.existsByClassCodeIgnoreCase(value);
-      case "courseCode":
-        return courseRepository.existsByCourseCodeIgnoreCase(value);
-      default:
-        return false;
-    }
+    return switch (field) {
+      case "classCode" -> courseClassesRepository.existsByClassCodeIgnoreCase(value);
+      case "courseCode" -> courseRepository.existsByCourseCodeIgnoreCase(value);
+      default -> false;
+    };
   }
 }

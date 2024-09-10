@@ -10,5 +10,6 @@ public class MessageConstants {
   public static final String COURSE_NOT_FOUND = "Course with code %s not found";
   public static final String NO_COURSES_FOUND_FOR_SEMESTER = "No courses found for semester with code %s";
   public static final String CLASS_NOT_FOUND = "Class with code %s not found";
+  public static final String STUDENT_NOT_FOUND_IN_CLASS = "Student with code %s not found in class with code %s";
 
 }
