@@ -55,11 +55,11 @@ public class RecordServiceImpl implements IRecordService {
        * record.setStudentCode(recordUpdateRequestDto.getStudentCode());
        */
     }
-    if (recordUpdateRequestDto.getStatus().equals(StatusConstants.ABSENT)) {
+    if (recordUpdateRequestDto.getStatus().equalsIgnoreCase(StatusConstants.ABSENT)) {
       record.setStatus(StatusConstants.ABSENT);
-    } else if (recordUpdateRequestDto.getStatus().equals(StatusConstants.PRESENT)) {
+    } else if (recordUpdateRequestDto.getStatus().equalsIgnoreCase(StatusConstants.PRESENT)) {
       record.setStatus(StatusConstants.PRESENT);
-    } else if (recordUpdateRequestDto.getStatus().equals(StatusConstants.LATE)) {
+    } else if (recordUpdateRequestDto.getStatus().equalsIgnoreCase(StatusConstants.LATE)) {
       record.setStatus(StatusConstants.LATE);
     } else {
       throw new FieldErrorException("Invalid status");
