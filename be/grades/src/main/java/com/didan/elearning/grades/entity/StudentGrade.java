@@ -36,6 +36,6 @@ public class StudentGrade extends SuperClass {
   @Column
   private String typeGrade; // A, B, C, D, E, F (TypeGradeConstants)
   @ManyToOne
-  @JoinColumn(name = "gradeClassCourseId")
-  private GradeClassCourse gradeClassCourse;
+  @JoinColumn(name = "gradeClassId")
+  private GradeClass gradeClass;
 }

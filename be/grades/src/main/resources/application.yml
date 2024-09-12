@@ -49,7 +49,7 @@ endpoints:
 info:
   app:
     name: ${spring.application.name}
-    description: "E-Learning users application"
+    description: "E-Learning grades application"
     version: "1.0.0"
 
 logging:
@@ -58,3 +58,5 @@ logging:
       didan:
         elearning:
           users: debug
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"

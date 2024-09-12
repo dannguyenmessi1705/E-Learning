@@ -6,6 +6,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -16,23 +18,16 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString @Builder
-public class WeightGrade extends SuperClass {
+@NoArgsConstructor @AllArgsConstructor @Getter @Setter @ToString @Builder
+public class GradeClass extends SuperClass {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private String weightGradeId;
+  private String gradeClassId;
   @Column
-  private String courseCode;
-  @Column
-  private Double attendanceWeight;
-  @Column
-  private Double assignmentWeight;
-  @Column
-  private Double midtermWeight;
-  @Column
-  private Double practiceWeight;
-  @Column
-  private Double finalWeight;
-  @OneToMany(mappedBy = "weightGrade", fetch = FetchType.LAZY)
-  private List<GradeClass> gradeClass;
+  private String classCode;
+  @ManyToOne
+  @JoinColumn(name = "weightGradeId")
+  private WeightGrade weightGrade;
+  @OneToMany(mappedBy = "gradeClass", fetch = FetchType.LAZY)
+  private List<StudentGrade> studentGrades;
 }
