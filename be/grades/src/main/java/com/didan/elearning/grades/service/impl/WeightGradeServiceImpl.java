@@ -42,7 +42,7 @@ public class WeightGradeServiceImpl implements IWeightGradeService {
     Double practiceWeight = Double.parseDouble(weightGradeRequestDto.getPracticeWeight());
     Double finalWeight = Double.parseDouble(weightGradeRequestDto.getFinalWeight());
 
-    if ((int) (attendanceWeight + assignmentWeight + midTermWeight + practiceWeight + finalWeight) != 1) {
+    if ((attendanceWeight + assignmentWeight + midTermWeight + practiceWeight + finalWeight) != Double.parseDouble("1.0")) {
       log.error("Sum of weights should be 1");
       throw new FieldErrorException("Sum of weights should be 1");
     }
@@ -90,7 +90,7 @@ public class WeightGradeServiceImpl implements IWeightGradeService {
     if (StringUtils.hasText(weightGradeRequestDto.getFinalWeight())) {
       weightGrade.setFinalWeight(Double.parseDouble(weightGradeRequestDto.getFinalWeight()));
     }
-    if ((int) (weightGrade.getAttendanceWeight() + weightGrade.getAssignmentWeight() + weightGrade.getMidtermWeight() + weightGrade.getPracticeWeight() + weightGrade.getFinalWeight()) != 1) {
+    if ((weightGrade.getAttendanceWeight() + weightGrade.getAssignmentWeight() + weightGrade.getMidtermWeight() + weightGrade.getPracticeWeight() + weightGrade.getFinalWeight()) != Double.parseDouble("1.0")) {
       log.error("Sum of weights should be 1");
       throw new FieldErrorException("Sum of weights should be 1");
     }

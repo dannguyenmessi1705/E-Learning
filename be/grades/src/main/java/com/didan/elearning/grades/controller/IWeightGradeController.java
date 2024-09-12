@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RequestMapping("{${spring.application.name}/v1/weight-grades")
+@RequestMapping("${spring.application.name}/v1/weight-grades")
 @Validated
 @Tag(
     name = "Weight Grade Controller",
