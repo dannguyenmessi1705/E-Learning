@@ -1,23 +1,23 @@
 server:
-  port: 8090
+  port: 9020
 
 spring:
   application:
-    name: courses
+    name: times-table
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
   profiles:
-    active: "dev"
+    active: "prod"
   config:
     import: optional:configserver:http://localhost:8071
 
 springdoc:
-  swagger-ui:
-    path: /swagger-ui
   api-docs:
     path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
 
 management:
   endpoints:
@@ -25,9 +25,9 @@ management:
       exposure:
         include: "*"
   health:
-    livenessstate:
-      enabled: true
     readinessstate:
+      enabled: true
+    livenessstate:
       enabled: true
   endpoint:
     health:
@@ -49,7 +49,7 @@ endpoints:
 info:
   app:
     name: ${spring.application.name}
-    description: "E-Learning courses application"
+    description: "E-Learning timetable application"
     version: "1.0.0"
 
 logging:
@@ -57,6 +57,6 @@ logging:
     com:
       didan:
         elearning:
-          courses: debug
+          users: debug
   pattern:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"

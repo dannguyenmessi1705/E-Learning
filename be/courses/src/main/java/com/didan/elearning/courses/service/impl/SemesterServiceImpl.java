@@ -8,6 +8,7 @@ import com.didan.elearning.courses.exception.ResourceAlreadyExistException;
 import com.didan.elearning.courses.repository.SemesterRepository;
 import com.didan.elearning.courses.service.ISemesterService;
 import com.didan.elearning.courses.utils.MapperUtils;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -30,11 +31,13 @@ public class SemesterServiceImpl implements ISemesterService {
           throw  new ResourceAlreadyExistException(String.format(MessageConstants.SEMESTER_ALREADY_EXISTS, semesterCode));
         });
     String semesterName = "Semester " + semesterCode.split("-")[1] + " in " + semesterCode.split("-")[0];
+    LocalDate startDate = LocalDate.parse(semesterRequestDto.getStartDate()).with(DayOfWeek.MONDAY); // Start from Monday of the week of date value
+    LocalDate endDate = LocalDate.parse(semesterRequestDto.getEndDate()).with(DayOfWeek.SUNDAY); // End on Sunday of the week of date value
     Semester semester = Semester.builder()
         .semesterCode(semesterCode)
         .name(semesterName)
-        .startDate(LocalDate.parse(semesterRequestDto.getStartDate()))
-        .endDate(LocalDate.parse(semesterRequestDto.getEndDate()))
+        .startDate(startDate)
+        .endDate(endDate)
         .build();
     semesterRepository.save(semester);
     SemesterResponseDto semesterResponseDto = MapperUtils.map(semester, SemesterResponseDto.class);
