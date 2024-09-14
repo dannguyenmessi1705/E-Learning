@@ -25,9 +25,9 @@ public class DateSchedules extends SuperClass {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String dateScheduleId;
-  @Column
+  @Column(name = "date_schedule")
   private LocalDate date;
-  @Column
+  @Column(name = "day_schedule")
   private String day;  // DateConstant
   @Column
   private String isDayOff;
