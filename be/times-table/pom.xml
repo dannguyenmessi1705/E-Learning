@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.didan.elearning</groupId>
-	<artifactId>times-tablle</artifactId>
+	<artifactId>times-table</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>times-tablle</name>
+	<name>times-table</name>
 	<description>Times Table Project</description>
 	<url/>
 	<licenses>
