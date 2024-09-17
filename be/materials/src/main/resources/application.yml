@@ -59,3 +59,9 @@ logging:
           users: debug
   pattern:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+
+minio:
+  access-key: 3fdk6PIB8xw4vjJxeuT0
+  secret-key: hLdUtVnsHDvcnszgVs5IySk5oHy0i0siWlC7eGXn
+  bucket-name: materials
+  endpoint: http://localhost:10001

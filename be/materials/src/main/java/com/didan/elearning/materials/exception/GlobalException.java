@@ -68,4 +68,12 @@ public class GlobalException extends ResponseEntityExceptionHandler {
         new ErrorDto(request.getDescription(false), HttpStatus.BAD_REQUEST.value(), ex.getMessage(),
             LocalDateTime.now()), HttpStatus.BAD_REQUEST);
   }
+
+  @ExceptionHandler(ErrorActionException.class)
+  public final ResponseEntity<ErrorDto> handleErrorActionException(ErrorActionException ex,
+      WebRequest request) {
+    return new ResponseEntity<>(
+        new ErrorDto(request.getDescription(false), HttpStatus.BAD_REQUEST.value(), ex.getMessage(),
+            LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+  }
 }
