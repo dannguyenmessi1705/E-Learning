@@ -11,6 +11,10 @@ spring:
     active: "dev"
   config:
     import: optional:configserver:http://localhost:8071
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
 
 springdoc:
   api-docs:
@@ -61,7 +65,7 @@ logging:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 
 minio:
-  access-key: 3fdk6PIB8xw4vjJxeuT0
-  secret-key: hLdUtVnsHDvcnszgVs5IySk5oHy0i0siWlC7eGXn
+  access-key: wSrySprYJN9gcU6FggWh
+  secret-key: hOYfqv9ojcQ7tFoQ9oPANJds1abfimfukwJXXzL7
+  endpoint: http://localhost:10000
   bucket-name: materials
-  endpoint: http://localhost:10001

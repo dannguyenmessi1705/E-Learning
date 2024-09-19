@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,16 +23,16 @@ public class ClassLivestream extends SuperClass{
   @Column
   private String timeClassInDateId;
   @Column
+  private String classCode;
+  @Column
   private String instructorId;
   @Column
   private String title;
   @Column
   private String description;
-  @Column
+  @Lob
+  @Column(length = 16777216)
   private String url;
   @Column
   private String materialType; // materialTypeConstant
-  @ManyToOne
-  @JoinColumn(name = "classId")
-  private ClassFolder classFolder;
 }

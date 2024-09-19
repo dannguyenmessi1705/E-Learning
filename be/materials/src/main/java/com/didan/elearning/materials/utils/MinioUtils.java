@@ -61,7 +61,9 @@ public class MinioUtils {
 
   public boolean bucketExists(String bucketName) {
     try {
-      return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+      boolean check = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+      log.info("check is {}", check);
+      return check;
     } catch (Exception e) {
       log.error("Error checking bucket existence: {}", e.getMessage());
       throw new ErrorActionException("Error checking bucket existence: " + e.getMessage());
@@ -362,7 +364,7 @@ public class MinioUtils {
     });
   }
 
-  private String getPresignedObjectUrl(String bucketName, String objectName) {
+  public String getPresignedObjectUrl(String bucketName, String objectName) {
     try {
       GetPresignedObjectUrlArgs args = GetPresignedObjectUrlArgs.builder()
           .method(Method.GET)
