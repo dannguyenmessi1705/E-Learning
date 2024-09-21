@@ -246,7 +246,9 @@ public class UserServiceImpl implements IUserService {
       return new ResourceNotFoundException(MessageConstant.USER_NOT_FOUND);
     });
     UpdateUserDetailResponseDto resUser = MapperUtils.map(user, UpdateUserDetailResponseDto.class);
-    resUser = MapperUtils.map(user.getStudentDetails(), resUser);
+    if (user.getStudentDetails() != null) {
+      resUser = MapperUtils.map(user.getStudentDetails(), resUser);
+    }
     log.info("User found: {}", resUser);
     return resUser;
   }

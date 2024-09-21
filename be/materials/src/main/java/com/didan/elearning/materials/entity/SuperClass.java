@@ -1,5 +1,6 @@
 package com.didan.elearning.materials.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import java.time.LocalDate;
@@ -16,7 +17,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class SuperClass {
   @CreatedDate
+  @Column(updatable = false)
   private LocalDateTime createdAt;
   @LastModifiedDate
+  @Column(insertable = false)
   private LocalDateTime updatedAt;
 }

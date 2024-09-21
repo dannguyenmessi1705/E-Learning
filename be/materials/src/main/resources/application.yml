@@ -8,7 +8,7 @@ spring:
       ddl-auto: update
     show-sql: true
   profiles:
-    active: "dev"
+    active: "prod"
   config:
     import: optional:configserver:http://localhost:8071
   servlet:
@@ -65,7 +65,7 @@ logging:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 
 minio:
-  access-key: wSrySprYJN9gcU6FggWh
-  secret-key: hOYfqv9ojcQ7tFoQ9oPANJds1abfimfukwJXXzL7
+  access-key: IFxmZQZnzwfeigv79Lo3
+  secret-key: M64UOvH5OAFZx7q4V1fGi6BbOmH9PXaAtfuyW9x3
   endpoint: http://localhost:10000
   bucket-name: materials

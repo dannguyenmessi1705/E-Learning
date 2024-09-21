@@ -118,6 +118,34 @@ public interface IClassInDateController {
   );
 
   @Operation(
+      summary = "Get class in date by ID",
+      description = "Get class in date by ID",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "Class in date",
+              content = @Content(
+                  schema = @Schema(
+                      implementation = GeneralResponse.class
+                  )
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(
+                      implementation = ErrorDto.class
+                  )
+              )
+          )
+      }
+  )
+  @GetMapping("/get/{classInDateId}")
+  ResponseEntity<GeneralResponse<ClassInDateResponseDto>> getClassInDateById(
+      @NotBlank(message = "Class in date ID is required") @PathVariable("classInDateId") String classInDateId);
+
+  @Operation(
       summary = "Delete class in date",
       description = "Delete class in date",
       responses = {

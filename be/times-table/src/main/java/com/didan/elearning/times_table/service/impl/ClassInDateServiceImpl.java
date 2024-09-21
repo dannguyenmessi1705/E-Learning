@@ -214,6 +214,20 @@ public class ClassInDateServiceImpl implements IClassInDateService {
   }
 
   @Override
+  public ClassInDateResponseDto getClassInDateById(String classInDateId) {
+    ClassInDate classInDate = classInDateRepository.findById(classInDateId)
+        .orElseThrow(() -> {
+          log.error("Class in date not found with ID: {}", classInDateId);
+          return new ResourceNotFoundException(
+              String.format(MessageConstant.CLASS_IN_DATE_NOT_FOUND, classInDateId));
+        });
+    ClassInDateResponseDto response = MapperUtils.map(classInDate, ClassInDateResponseDto.class);
+    response.setDate(MapperUtils.map(classInDate.getDateSchedules(), DateSchedulesResponseDto.class));
+    response.setTime(MapperUtils.map(classInDate.getTimeClasses(), TimeClassResponseDto.class));
+    return response;
+  }
+
+  @Override
   @Transactional
   @Modifying
   public void deleteClassInDate(String classInDateId) {

@@ -34,7 +34,7 @@ public class ClassMaterials extends SuperClass {
   private String description;
   @Lob
   @Column(length = 16777216)
-  private String url;
+  private String path;
   @Column
   private String materialType; // materialTypeConstant
 }

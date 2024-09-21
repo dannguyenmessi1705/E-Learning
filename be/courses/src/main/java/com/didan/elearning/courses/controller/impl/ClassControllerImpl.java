@@ -23,89 +23,59 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClassControllerImpl implements IClassController {
   private final ICourseClassesService courseClassesService;
   @Override
-  public ResponseEntity<MappingJacksonValue> createClass(
+  public ResponseEntity<GeneralResponse<ClassResponseDto>> createClass(
       ClassRequestDto classRequestDto) {
     log.info("Creating a new class...");
     ClassResponseDto classResponseDto = courseClassesService.createClassOfCourse(classRequestDto);
     GeneralResponse<ClassResponseDto> response = new GeneralResponse<>(HttpStatus.CREATED.value(), "Class created successfully", classResponseDto);
-    MappingJacksonValue mapper = new MappingJacksonValue(response);
-    SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAll();
-    FilterProvider filters = new SimpleFilterProvider().addFilter("ClassResponseDto", filter);
-    mapper.setFilters(filters);
-    return new ResponseEntity<>(mapper, HttpStatus.CREATED);
+    return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
   @Override
-  public ResponseEntity<MappingJacksonValue> getClassesByInstructor(String instructorId) {
+  public ResponseEntity<GeneralResponse<List<ClassResponseDto>>> getClassesByInstructor(String instructorId) {
     log.info("Getting classes of instructor {}...", instructorId);
     List<ClassResponseDto> classResponse = courseClassesService.getAllClassesByInstructor(instructorId);
     GeneralResponse<List<ClassResponseDto>> response = new GeneralResponse<>(HttpStatus.OK.value(), "Returning classes of instructor " + instructorId, classResponse);
-    MappingJacksonValue mapper = new MappingJacksonValue(response);
-    SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAll();
-    FilterProvider filters = new SimpleFilterProvider().addFilter("ClassResponseDto", filter);
-    mapper.setFilters(filters);
-    return new ResponseEntity<>(mapper, HttpStatus.OK);
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<MappingJacksonValue> getClassesByAssistant(String assistantId) {
+  public ResponseEntity<GeneralResponse<List<ClassResponseDto>>> getClassesByAssistant(String assistantId) {
     log.info("Getting classes of assistant {}...", assistantId);
     List<ClassResponseDto> classResponse = courseClassesService.getAllClassesByAssistant(assistantId);
     GeneralResponse<List<ClassResponseDto>> response = new GeneralResponse<>(HttpStatus.OK.value(), "Returning classes of assistant " + assistantId, classResponse);
-    MappingJacksonValue mapper = new MappingJacksonValue(response);
-    SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAll();
-    FilterProvider filters = new SimpleFilterProvider().addFilter("ClassResponseDto", filter);
-    mapper.setFilters(filters);
-    return new ResponseEntity<>(mapper, HttpStatus.OK);
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<MappingJacksonValue> updateClass(
+  public ResponseEntity<GeneralResponse<ClassResponseDto>> updateClass(
       ClassUpdateRequestDto classUpdateRequestDto) {
     log.info("Updating class {}...", classUpdateRequestDto.getClassCode());
     ClassResponseDto classResponseDto = courseClassesService.updateCourseClasses(classUpdateRequestDto);
     GeneralResponse<ClassResponseDto> response = new GeneralResponse<>(HttpStatus.OK.value(), "Class updated successfully", classResponseDto);
-    MappingJacksonValue mapper = new MappingJacksonValue(response);
-    SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAll();
-    FilterProvider filters = new SimpleFilterProvider().addFilter("ClassResponseDto", filter);
-    mapper.setFilters(filters);
-    return new ResponseEntity<>(mapper, HttpStatus.OK);
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<MappingJacksonValue> deleteClass(String classCode) {
+  public ResponseEntity<GeneralResponse<Void>> deleteClass(String classCode) {
     log.info("Deleting class {}...", classCode);
     courseClassesService.deleteCourseClasses(classCode);
-    GeneralResponse<String> response = new GeneralResponse<>(HttpStatus.OK.value(), "Class deleted successfully", classCode);
-    MappingJacksonValue mapper = new MappingJacksonValue(response);
-    SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAll();
-    FilterProvider filters = new SimpleFilterProvider().addFilter("ClassResponseDto", filter);
-    mapper.setFilters(filters);
-    return new ResponseEntity<>(mapper, HttpStatus.OK);
+    return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.NO_CONTENT.value(), "Class deleted successfully", null), HttpStatus.NO_CONTENT);
   }
 
   @Override
-  public ResponseEntity<MappingJacksonValue> getClassByCode(String classCode) {
+  public ResponseEntity<GeneralResponse<ClassResponseDto>> getClassByCode(String classCode) {
     log.info("Getting class {}...", classCode);
     ClassResponseDto classResponseDto = courseClassesService.getClassByCode(classCode);
-    GeneralResponse<ClassResponseDto> response = new GeneralResponse<>(HttpStatus.OK.value(), "Returning class " + classCode, classResponseDto);
-    MappingJacksonValue mapper = new MappingJacksonValue(response);
-    SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAll();
-    FilterProvider filters = new SimpleFilterProvider().addFilter("ClassResponseDto", filter);
-    mapper.setFilters(filters);
-    return new ResponseEntity<>(mapper, HttpStatus.OK);
+    return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(), "Returning class " + classCode, classResponseDto), HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<MappingJacksonValue> getClassesOfCourse(
+  public ResponseEntity<GeneralResponse<List<ClassResponseDto>>> getClassesOfCourse(
       String courseCode) {
     log.info("Getting classes of course {}...", courseCode);
     List<ClassResponseDto> classResponseDtos = courseClassesService.getAllClassesOfCourse(courseCode);
     GeneralResponse<List<ClassResponseDto>> response = new GeneralResponse<>(HttpStatus.OK.value(), "Returning classes of course " + courseCode, classResponseDtos);
-    MappingJacksonValue mapper = new MappingJacksonValue(response);
-    SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("courseCode");
-    FilterProvider filters = new SimpleFilterProvider().addFilter("ClassResponseDto", filter);
-    mapper.setFilters(filters);
-    return new ResponseEntity<>(mapper, HttpStatus.OK);
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 }

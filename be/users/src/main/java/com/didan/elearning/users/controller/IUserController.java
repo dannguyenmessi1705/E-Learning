@@ -14,9 +14,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
     name = "User API",
     description = "The API for managing users"
 )
+@Validated
 public interface IUserController {
   @Operation(
       summary = "Create a new user",
@@ -196,7 +199,9 @@ public interface IUserController {
       }
   )
   @GetMapping("/get/{id}")
-  ResponseEntity<GeneralResponse<UpdateUserDetailResponseDto>> getUserDetails(@PathVariable("id") String userId);
+  ResponseEntity<GeneralResponse<UpdateUserDetailResponseDto>> getUserDetails(
+      @NotBlank(message = "User ID is required")
+      @PathVariable("id") String userId);
 
   @Operation(
       summary = "Activate a user",

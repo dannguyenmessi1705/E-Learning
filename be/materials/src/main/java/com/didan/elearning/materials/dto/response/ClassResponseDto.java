@@ -1,4 +1,4 @@
-package com.didan.elearning.courses.dto.response;
+package com.didan.elearning.materials.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,10 +10,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Schema(
-        name = "ClassResponseDto",
-        description = "Response DTO for a class"
+    name = "ClassResponseDto",
+    description = "Response DTO for a class"
 )
-@AllArgsConstructor @NoArgsConstructor @Data @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
+@JsonFilter("ClassResponseDto")
 public class ClassResponseDto {
   @Schema(
       name = "classId",

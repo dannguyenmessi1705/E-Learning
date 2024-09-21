@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-@Validated
 @Slf4j
 public class UserControllerImpl implements IUserController {
   private final IUserService userService;

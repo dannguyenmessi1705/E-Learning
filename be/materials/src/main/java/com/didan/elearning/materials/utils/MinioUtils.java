@@ -16,6 +16,7 @@ import io.minio.RemoveBucketArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.Result;
 import io.minio.StatObjectArgs;
+import io.minio.StatObjectResponse;
 import io.minio.UploadObjectArgs;
 import io.minio.http.Method;
 import io.minio.messages.Bucket;
@@ -308,14 +309,14 @@ public class MinioUtils {
     }
   }
 
-  public String getFileStatusInfo(String bucketName, String objectName) {
+  public StatObjectResponse getFileStatusInfo(String bucketName, String objectName) {
     try {
       return minioClient.statObject(
           StatObjectArgs.builder()
               .bucket(bucketName)
               .object(objectName)
               .build()
-      ).toString();
+      );
     } catch (Exception e) {
       log.error("Error getting file status info: {}", e.getMessage());
       throw new ErrorActionException("Error getting file status info: " + e.getMessage());

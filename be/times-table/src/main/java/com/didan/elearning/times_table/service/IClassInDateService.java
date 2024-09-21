@@ -8,5 +8,6 @@ public interface IClassInDateService {
   ClassInDateResponseDto createClassInDate(ClassInDateRequestDto classInDateRequestDto);
   ClassInDateResponseDto updateClassInDate(String classInDateId, ClassInDateRequestDto classInDateRequestDto);
   List<ClassInDateResponseDto> getAllClassInDateByClassCodeAndDateScheduleId(String classCode, String date);
+  ClassInDateResponseDto getClassInDateById(String classInDateId);
   void deleteClassInDate(String classInDateId);
 }

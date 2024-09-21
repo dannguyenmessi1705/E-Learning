@@ -38,7 +38,12 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
       log.error("No classes found for course with code {}", courseCode);
       return List.of();
     }
-    List<ClassResponseDto> responses = MapperUtils.mapList(courseClasses, ClassResponseDto.class);
+    List<ClassResponseDto> responses = new ArrayList<>();
+    courseClasses.forEach(courseClass -> {
+      ClassResponseDto response = MapperUtils.map(courseClass, ClassResponseDto.class);
+      response.setCourseCode(courseClass.getClassCode());
+      responses.add(response);
+        });
     return responses;
   }
 
@@ -81,13 +86,7 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
       log.error("No classes found for instructor with ID {}", instructorId);
       return List.of();
     }
-    List<ClassResponseDto> response = new ArrayList<>();
-    for (CourseClasses courseClass : courseClasses) {
-      ClassResponseDto classResponseDto = MapperUtils.map(courseClass, ClassResponseDto.class);
-      classResponseDto.setCourseCode(courseClass.getCourse().getCourseCode());
-      response.add(classResponseDto);
-    }
-    return response;
+    return mappedListCourseCode(courseClasses);
   }
 
   @Override
@@ -97,13 +96,7 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
       log.error("No classes found for assistant with ID {}", assistantId);
       return List.of();
     }
-    List<ClassResponseDto> response = new ArrayList<>();
-    for (CourseClasses courseClass : courseClasses) {
-      ClassResponseDto classResponseDto = MapperUtils.map(courseClass, ClassResponseDto.class);
-      classResponseDto.setCourseCode(courseClass.getCourse().getCourseCode());
-      response.add(classResponseDto);
-    }
-    return response;
+    return mappedListCourseCode(courseClasses);
   }
 
   @Override
@@ -113,7 +106,7 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
           log.error("Class with code {} not found", classCode);
           return new ResourceNotFoundException(String.format(MessageConstants.CLASS_NOT_FOUND, classCode));
         });
-    return MapperUtils.map(courseClass, ClassResponseDto.class);
+    return mappedCourseCode(courseClass);
   }
 
   @Override
@@ -159,7 +152,7 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
     }
     courseClassesRepository.save(courseClass);
     log.info("Class with code {} updated successfully", classUpdateRequestDto.getClassCode());
-    return MapperUtils.map(courseClass, ClassResponseDto.class);
+    return mappedCourseCode(courseClass);
   }
 
   @Override
@@ -189,5 +182,21 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
       case "courseCode" -> courseRepository.existsByCourseCodeIgnoreCase(value);
       default -> false;
     };
+  }
+
+  private List<ClassResponseDto> mappedListCourseCode(List<CourseClasses> courseClasses) {
+    List<ClassResponseDto> responses = new ArrayList<>();
+    courseClasses.forEach(courseClass -> {
+      ClassResponseDto response = MapperUtils.map(courseClass, ClassResponseDto.class);
+      response.setCourseCode(courseClass.getCourse().getCourseCode());
+      responses.add(response);
+    });
+    return responses;
+  }
+
+  private ClassResponseDto mappedCourseCode(CourseClasses courseClass) {
+    ClassResponseDto classResponseDto = MapperUtils.map(courseClass, ClassResponseDto.class);
+    classResponseDto.setCourseCode(courseClass.getCourse().getCourseCode());
+    return classResponseDto;
   }
 }

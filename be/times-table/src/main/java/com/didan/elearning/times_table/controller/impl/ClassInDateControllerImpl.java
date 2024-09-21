@@ -43,6 +43,14 @@ public class ClassInDateControllerImpl implements IClassInDateController {
   }
 
   @Override
+  public ResponseEntity<GeneralResponse<ClassInDateResponseDto>> getClassInDateById(
+      String classInDateId) {
+    log.info("Get class in date by id: {}", classInDateId);
+    ClassInDateResponseDto classInDateResponseDto = classInDateService.getClassInDateById(classInDateId);
+    return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(), "Get class in date by id", classInDateResponseDto), HttpStatus.OK);
+  }
+
+  @Override
   public ResponseEntity<GeneralResponse<Void>> deleteClassInDate(String classInDateId) {
     log.info("Delete class in date by id: {}", classInDateId);
     classInDateService.deleteClassInDate(classInDateId);

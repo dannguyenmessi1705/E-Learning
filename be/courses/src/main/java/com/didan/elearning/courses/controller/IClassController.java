@@ -55,7 +55,7 @@ public interface IClassController {
       }
   )
   @PostMapping("/create")
-  ResponseEntity<MappingJacksonValue> createClass(@Valid @RequestBody ClassRequestDto classRequestDto);
+  ResponseEntity<GeneralResponse<ClassResponseDto>> createClass(@Valid @RequestBody ClassRequestDto classRequestDto);
 
   @Operation(
       summary = "Get all classes of a course",
@@ -82,7 +82,7 @@ public interface IClassController {
       }
   )
   @GetMapping("/all/{courseCode}")
-  ResponseEntity<MappingJacksonValue> getClassesOfCourse(@NotEmpty(message = "Course code is required") @PathVariable("courseCode") String courseCode);
+  ResponseEntity<GeneralResponse<List<ClassResponseDto>>> getClassesOfCourse(@NotEmpty(message = "Course code is required") @PathVariable("courseCode") String courseCode);
 
   @Operation(
       summary = "Get all classes by instructor",
@@ -109,7 +109,7 @@ public interface IClassController {
       }
   )
   @GetMapping("/instructor/{instructorId}")
-  ResponseEntity<MappingJacksonValue> getClassesByInstructor(@NotEmpty(message = "Instructor ID is required") @PathVariable("instructorId") String instructorId);
+  ResponseEntity<GeneralResponse<List<ClassResponseDto>>> getClassesByInstructor(@NotEmpty(message = "Instructor ID is required") @PathVariable("instructorId") String instructorId);
 
   @Operation(
       summary = "Get all classes by assistant",
@@ -136,7 +136,7 @@ public interface IClassController {
       }
   )
   @GetMapping("/assistant/{assistantId}")
-  ResponseEntity<MappingJacksonValue> getClassesByAssistant(@NotEmpty(message = "Assistant ID is required") @PathVariable("assistantId")String assistantId);
+  ResponseEntity<GeneralResponse<List<ClassResponseDto>>> getClassesByAssistant(@NotEmpty(message = "Assistant ID is required") @PathVariable("assistantId")String assistantId);
 
   @Operation(
       summary = "Update a class",
@@ -163,7 +163,7 @@ public interface IClassController {
       }
   )
   @PostMapping("/update")
-  ResponseEntity<MappingJacksonValue> updateClass(@Valid @RequestBody ClassUpdateRequestDto classUpdateRequestDto);
+  ResponseEntity<GeneralResponse<ClassResponseDto>> updateClass(@Valid @RequestBody ClassUpdateRequestDto classUpdateRequestDto);
 
   @Operation(
       summary = "Delete a class",
@@ -190,7 +190,7 @@ public interface IClassController {
       }
   )
   @DeleteMapping("/delete/{classCode}")
-  ResponseEntity<MappingJacksonValue> deleteClass(@NotEmpty(message = "Class code is required") @PathVariable("classCode") String classCode);
+  ResponseEntity<GeneralResponse<Void>> deleteClass(@NotEmpty(message = "Class code is required") @PathVariable("classCode") String classCode);
 
   @Operation(
       summary = "Get class by code",
@@ -217,5 +217,5 @@ public interface IClassController {
       }
   )
   @GetMapping("/{classCode}")
-  ResponseEntity<MappingJacksonValue> getClassByCode(@NotEmpty(message = "Class code is required") @PathVariable("classCode") String classCode);
+  ResponseEntity<GeneralResponse<ClassResponseDto>> getClassByCode(@NotEmpty(message = "Class code is required") @PathVariable("classCode") String classCode);
 }
