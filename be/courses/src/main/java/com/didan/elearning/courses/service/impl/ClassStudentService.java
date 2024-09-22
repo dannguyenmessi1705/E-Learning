@@ -1,18 +1,24 @@
 package com.didan.elearning.courses.service.impl;
 
 import com.didan.elearning.courses.constants.MessageConstants;
+import com.didan.elearning.courses.constants.MessageConstants.Status;
 import com.didan.elearning.courses.dto.request.ClassStudentRequestDto;
 import com.didan.elearning.courses.dto.response.ClassResponseDto;
+import com.didan.elearning.courses.dto.response.GeneralResponse;
+import com.didan.elearning.courses.dto.response.UpdateUserDetailResponseDto;
 import com.didan.elearning.courses.entity.ClassStudents;
 import com.didan.elearning.courses.entity.CourseClasses;
 import com.didan.elearning.courses.exception.ResourceNotFoundException;
 import com.didan.elearning.courses.repository.ClassStudentsRepository;
 import com.didan.elearning.courses.repository.CourseClassesRepository;
 import com.didan.elearning.courses.service.IClassStudentService;
+import com.didan.elearning.courses.service.client.UsersFeignClient;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,6 +27,8 @@ import org.springframework.stereotype.Service;
 public class ClassStudentService implements IClassStudentService {
   private final ClassStudentsRepository classStudentsRepository;
   private final CourseClassesRepository courseClassesRepository;
+  private final UsersFeignClient usersFeignClient;
+
   @Override
   public void addStudentsToClass(ClassStudentRequestDto classStudentRequestDto) {
     CourseClasses courseClass = courseClassesRepository.findCourseClassesByClassCodeIgnoreCase(classStudentRequestDto.getClassCode())
@@ -30,15 +38,7 @@ public class ClassStudentService implements IClassStudentService {
         });
     String[] studentCodes = classStudentRequestDto.getStudentCodes();
     for (String studentCode : studentCodes) {
-      /**
-       * OpenFeign call to user service to get student details
-       * User user = userServiceClient.getUserByCode(classStudentRequestDto.getStudentCode());
-       * if (user == null) {
-       *  log.info("Student with code {} not found", classStudentRequestDto.getStudentCode());
-       *  throw new ResourceNotFoundException(String.format(MessageConstants.STUDENT_NOT_FOUND, classStudentRequestDto.getStudentCode()));
-       *  }
-       *
-       */
+      validateExistedStudent(studentCode);
       ClassStudents classStudents = ClassStudents.builder()
           .studentCode(studentCode)
           .courseClasses(courseClass)
@@ -56,21 +56,28 @@ public class ClassStudentService implements IClassStudentService {
           return new ResourceNotFoundException(String.format(MessageConstants.CLASS_NOT_FOUND, classStudentRequestDto.getClassCode()));
         });
     for (String studentCode : classStudentRequestDto.getStudentCodes()) {
-      /**
-       * OpenFeign call to user service to get student details
-       * User user = userServiceClient.getUserByCode(classStudentRequestDto.getStudentCode());
-       * if (user == null) {
-       *  log.info("Student with code {} not found", classStudentRequestDto.getStudentCode());
-       *  throw new ResourceNotFoundException(String.format(MessageConstants.STUDENT_NOT_FOUND, classStudentRequestDto.getStudentCode()));
-       *  }
-       *
-       */
+      validateExistedStudent(studentCode);
       ClassStudents classStudents = classStudentsRepository.findClassStudentsByStudentCodeAndCourseClasses_ClassCode(studentCode, classStudentRequestDto.getClassCode())
           .orElseThrow(() -> {
             log.info("Student with code {} not found in class {}", studentCode, classStudentRequestDto.getClassCode());
             return new ResourceNotFoundException(String.format(MessageConstants.STUDENT_NOT_FOUND_IN_CLASS, studentCode, classStudentRequestDto.getClassCode()));
           });
       classStudentsRepository.delete(classStudents);
+    }
+  }
+
+  private void validateExistedStudent(String studentCode) {
+    try {
+      ResponseEntity<GeneralResponse<UpdateUserDetailResponseDto>> student = usersFeignClient.getStudentByStudentCode(
+          studentCode);
+      if (!Objects.equals(Objects.requireNonNull(student.getBody()).getStatusCode(), Status.SUCCESS)) {
+        log.info("Student with code {} not found", studentCode);
+        throw new ResourceNotFoundException(String.format(MessageConstants.STUDENT_NOT_FOUND,
+            studentCode));
+      }
+    } catch (Exception e) {
+      throw new ResourceNotFoundException(String.format(MessageConstants.STUDENT_NOT_FOUND,
+          studentCode));
     }
   }
 
@@ -86,27 +93,13 @@ public class ClassStudentService implements IClassStudentService {
 
   @Override
   public void removeAllClassesOfStudent(String studentCode) {
-    /**
-     * OpenFeign call to user service to get student details
-     * User user = userServiceClient.getUserByCode(studentCode);
-     * if (user == null) {
-     * log.info("Student with code {} not found", studentCode);
-     * throw new ResourceNotFoundException(String.format(MessageConstants.STUDENT_NOT_FOUND, studentCode));
-     * }
-     */
+    validateExistedStudent(studentCode);
     classStudentsRepository.deleteAllByStudentCode(studentCode);
   }
 
   @Override
   public List<ClassResponseDto> getClassesOfStudent(String studentCode) {
-    /**
-     * OpenFeign call to user service to get student details
-     * User user = userServiceClient.getUserByCode(studentCode);
-     * if (user == null) {
-     * log.info("Student with code {} not found", studentCode);
-     * throw new ResourceNotFoundException(String.format(MessageConstants.STUDENT_NOT_FOUND, studentCode));
-     * }
-     */
+    validateExistedStudent(studentCode);
     List<ClassStudents> classStudents = classStudentsRepository.findClassStudentsByStudentCodeIgnoreCase(studentCode);
     if (classStudents.isEmpty()) {
       log.info("No classes found for student with code {}", studentCode);

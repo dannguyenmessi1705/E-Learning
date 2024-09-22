@@ -25,6 +25,7 @@ import com.didan.elearning.users.repository.UserRolesRepository;
 import com.didan.elearning.users.service.IPasswordRequestService;
 import com.didan.elearning.users.service.IUserService;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -189,7 +190,7 @@ public class UserServiceImpl implements IUserService {
     });
     setRoleUser(user, roleName);
     RoleResponseDto resRole = new RoleResponseDto();
-    resRole.setRoleName(roleName);
+    resRole.setRoleName(new String[]{roleName});
     resRole.setUserId(userId);
     return resRole;
   }
@@ -202,7 +203,7 @@ public class UserServiceImpl implements IUserService {
     });
     unSetRoleUser(user, roleName);
     RoleResponseDto resRole = new RoleResponseDto();
-    resRole.setRoleName(roleName);
+    resRole.setRoleName(new String[]{roleName});
     resRole.setUserId(userId);
     return resRole;
   }
@@ -254,6 +255,18 @@ public class UserServiceImpl implements IUserService {
   }
 
   @Override
+  public UpdateUserDetailResponseDto getStudentByStudentCode(String studentCode) {
+    StudentDetails student = studentDetailsRepository.findFirstByStudentCode(studentCode).orElseThrow(() -> {
+      log.error(String.format(MessageConstant.STUDENT_NOT_FOUND, studentCode));
+      return new ResourceNotFoundException(String.format(MessageConstant.STUDENT_NOT_FOUND, studentCode));
+    });
+    UpdateUserDetailResponseDto resUser = MapperUtils.map(student, UpdateUserDetailResponseDto.class);
+    MapperUtils.map(student.getUser(), resUser);
+    log.info("Student found: {}", resUser);
+    return resUser;
+  }
+
+  @Override
   public boolean activateUser(String userId) {
     User user = userRepository.findById(userId).orElseThrow(() -> {
       log.info(MessageConstant.USER_NOT_FOUND);
@@ -286,5 +299,20 @@ public class UserServiceImpl implements IUserService {
     userRepository.save(user);
     log.info("Password changed successfully for userId: {}", userId);
     return true;
+  }
+
+  @Override
+  public RoleResponseDto getRoleForUser(String userId) {
+    User user = userRepository.findById(userId).orElseThrow(() -> {
+      log.info(MessageConstant.USER_NOT_FOUND);
+      return new ResourceNotFoundException(MessageConstant.USER_NOT_FOUND);
+    });
+    RoleResponseDto resRole = new RoleResponseDto();
+    resRole.setUserId(userId);
+    List<String> roles = new ArrayList<>();
+    user.getRoles().forEach(userRoles -> roles.add(userRoles.getRole().getRoleName()));
+    String[] roleArray = new String[roles.size()];
+    resRole.setRoleName(roles.toArray(roleArray));
+    return resRole;
   }
 }

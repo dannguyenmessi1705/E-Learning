@@ -1,21 +1,29 @@
 package com.didan.elearning.courses.service.impl;
 
 import com.didan.elearning.courses.constants.MessageConstants;
+import com.didan.elearning.courses.constants.MessageConstants.Status;
+import com.didan.elearning.courses.constants.RoleConstants;
 import com.didan.elearning.courses.dto.request.ClassRequestDto;
 import com.didan.elearning.courses.dto.request.ClassUpdateRequestDto;
 import com.didan.elearning.courses.dto.response.ClassResponseDto;
+import com.didan.elearning.courses.dto.response.GeneralResponse;
+import com.didan.elearning.courses.dto.response.RoleResponseDto;
 import com.didan.elearning.courses.entity.Course;
 import com.didan.elearning.courses.entity.CourseClasses;
 import com.didan.elearning.courses.exception.ResourceNotFoundException;
 import com.didan.elearning.courses.repository.CourseClassesRepository;
 import com.didan.elearning.courses.repository.CourseRepository;
 import com.didan.elearning.courses.service.ICourseClassesService;
+import com.didan.elearning.courses.service.client.UsersFeignClient;
 import com.didan.elearning.courses.utils.MapperUtils;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -25,6 +33,7 @@ import org.springframework.util.StringUtils;
 public class CourseClassesServiceImpl implements ICourseClassesService {
   private final CourseClassesRepository courseClassesRepository;
   private final CourseRepository courseRepository;
+  private final UsersFeignClient usersFeignClient;
 
   @Override
   public List<ClassResponseDto> getAllClassesOfCourse(String courseCode) {
@@ -54,22 +63,13 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
           log.error("Course with code {} not found", classRequestDto.getCourseCode());
           return new ResourceNotFoundException(String.format(MessageConstants.COURSE_NOT_FOUND, classRequestDto.getCourseCode()));
         });
+
     CourseClasses newCourse = MapperUtils.map(classRequestDto, CourseClasses.class);
     String classCode = setClassCode(classRequestDto.getStudentYear());
-    /**
-     * OpenFeint to UserService to get instructor and assistant
-     * Instructor instructor = userService.getInstructorById(classRequestDto.getInstructorId());
-     * Assistant assistant = new Assistant();
-     * if (classRequestDto.getAssistantId() != null) {
-     * assistant = userService.getAssistantById(classRequestDto.getAssistantId());
-     * if (assistant == null) {
-     * throw new ResourceNotFoundException("Assistant not found");
-     * }
-     * }
-     * if (instructor == null) {
-     *  throw new ResourceNotFoundException("Instructor or assistant not found");
-     *  }
-     */
+    validateInstructor(classRequestDto.getInstructorId());
+    if (StringUtils.hasText(classRequestDto.getAssistantId())) {
+      validateAssitant(classRequestDto.getAssistantId());
+    }
     newCourse.setClassCode(classCode);
     newCourse.setCourse(course);
     newCourse.setClassName(course.getCourseName() + " - " + classCode.split("-")[1]);
@@ -77,6 +77,42 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
     ClassResponseDto response = MapperUtils.map(newCourse, ClassResponseDto.class);
     response.setCourseCode(course.getCourseCode());
     return response;
+  }
+
+  private void validateInstructor(String instructorId) {
+    try {
+      ResponseEntity<GeneralResponse<RoleResponseDto>> instructorResponse = usersFeignClient.getRoleForUser(instructorId);
+      if (!Objects.equals(Objects.requireNonNull(instructorResponse.getBody()).getStatusCode(), Status.SUCCESS)) {
+        log.error("Error getting role for instructor with id {}", instructorId);
+        throw new ResourceNotFoundException("Error getting role for instructor with id " + instructorId);
+      }
+      List<String> roles = Arrays.stream(Objects.requireNonNull(instructorResponse.getBody().getData()).getRoleName()).toList();
+      if (!roles.contains(RoleConstants.INSTRUCTOR)) {
+        log.error("User with id {} is not an instructor", instructorId);
+        throw new ResourceNotFoundException("User with id " + instructorId + " is not an instructor");
+      }
+    } catch (Exception e) {
+      log.error("Instructor with id {} not found", instructorId);
+      throw new ResourceNotFoundException(String.format(MessageConstants.INSTRUCTOR_NOT_FOUND, instructorId));
+    }
+  }
+
+  private void validateAssitant(String assistantId) {
+    try {
+      ResponseEntity<GeneralResponse<RoleResponseDto>> instructorResponse = usersFeignClient.getRoleForUser(assistantId);
+      if (!Objects.equals(Objects.requireNonNull(instructorResponse.getBody()).getStatusCode(), Status.SUCCESS)) {
+        log.error("Error getting role for instructor with id {}", assistantId);
+        throw new ResourceNotFoundException("Error getting role for instructor with id " + assistantId);
+      }
+      List<String> roles = Arrays.stream(Objects.requireNonNull(instructorResponse.getBody().getData()).getRoleName()).toList();
+      if (!roles.contains(RoleConstants.INSTRUCTOR)) {
+        log.error("User with id {} is not an assistant", assistantId);
+        throw new ResourceNotFoundException("User with id " + assistantId + " is not an assistant");
+      }
+    } catch (Exception e) {
+      log.error("Assistant with id {} not found", assistantId);
+      throw new ResourceNotFoundException(String.format(MessageConstants.ASSISTANT_NOT_FOUND, assistantId));
+    }
   }
 
   @Override
@@ -118,23 +154,10 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
           return new ResourceNotFoundException(String.format(MessageConstants.CLASS_NOT_FOUND, classUpdateRequestDto.getClassCode()));
         });
     if (StringUtils.hasText(classUpdateRequestDto.getInstructorId())) {
-      /**
-       * OpenFeint to UserService to get instructor
-       * Instructor instructor = userService.getInstructorById(classUpdate
-       * RequestDto.getInstructorId());
-       * if (instructor == null) {
-       * throw new ResourceNotFoundException("Instructor not found");
-       * }
-       */
+      validateInstructor(classUpdateRequestDto.getInstructorId());
     }
     if (StringUtils.hasText(classUpdateRequestDto.getAssistantId())) {
-      /**
-       * OpenFeint to UserService to get assistant
-       * Assistant assistant = userService.getAssistantById(classUpdateRequestDto.getAssistantId());
-       * if (assistant == null) {
-       * throw new ResourceNotFoundException("Assistant not found");
-       * }
-       */
+      validateAssitant(classUpdateRequestDto.getAssistantId());
     }
     if (StringUtils.hasText(classUpdateRequestDto.getClassName())) {
       courseClass.setClassName(classUpdateRequestDto.getClassName());

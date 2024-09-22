@@ -272,4 +272,54 @@ public interface IUserController {
   @PatchMapping("/change-password")
   ResponseEntity<GeneralResponse<String>> changePassword(@RequestBody @Valid
       ChangePasswordRequestDto changePasswordRequestDto);
+
+  @Operation(
+      summary = "Get student by student code",
+      description = "Get student by student code with the provided information",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "Get student by student code successfully",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Http Status Internal Server Error",
+              content = @Content(
+                  schema = @Schema(implementation = ErrorDto.class)
+              )
+          )
+      }
+  )
+  @GetMapping("/get/student/{studentCode}")
+  ResponseEntity<GeneralResponse<UpdateUserDetailResponseDto>> getStudentByStudentCode(
+      @NotBlank(message = "Student code is required")
+      @PathVariable("studentCode") String studentCode);
+
+  @Operation(
+      summary = "Get role for user",
+      description = "Get role for user with the provided information",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "Get role for user successfully",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Http Status Internal Server Error",
+              content = @Content(
+                  schema = @Schema(implementation = ErrorDto.class)
+              )
+          )
+      }
+  )
+  @GetMapping("/get/role/{id}")
+  ResponseEntity<GeneralResponse<RoleResponseDto>> getRoleForUser(
+      @NotBlank(message = "User ID is required")
+      @PathVariable("id") String userId);
 }

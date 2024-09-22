@@ -15,7 +15,9 @@ public interface IUserService {
   boolean deleteUser(String userId);
   List<UpdateUserDetailResponseDto> searchUser(String searchValue);
   UpdateUserDetailResponseDto getUserDetails(String userId);
+  UpdateUserDetailResponseDto getStudentByStudentCode(String studentCode);
   boolean activateUser(String userId);
   boolean deactivateUser(String userId);
   boolean changePassword(String token, String newPassword);
+  RoleResponseDto getRoleForUser(String userId);
 }

@@ -137,4 +137,21 @@ public class UserControllerImpl implements IUserController {
           MessageConstant.PASSWORD_CANNOT_BE_CHANGED, ""), HttpStatus.BAD_REQUEST);
     }
   }
+
+  @Override
+  public ResponseEntity<GeneralResponse<UpdateUserDetailResponseDto>> getStudentByStudentCode(
+      String studentCode) {
+    log.info("Getting student by student code...");
+    UpdateUserDetailResponseDto student = userService.getStudentByStudentCode(studentCode);
+    return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(),
+        MessageConstant.USER_FOUND, student), HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<GeneralResponse<RoleResponseDto>> getRoleForUser(String userId) {
+    log.info("Getting role for user...");
+    RoleResponseDto roleResponseDto = userService.getRoleForUser(userId);
+    return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(),
+        "Role found for user", roleResponseDto), HttpStatus.OK);
+  }
 }

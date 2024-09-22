@@ -16,6 +16,7 @@ public class MessageConstant {
   public static final String USER_DEACTIVATED_SUCCESSFULLY = "User deactivated successfully";
   public static final String USER_DEACTIVATION_FAILED = "User deactivation failed";
   public static final String USER_DOES_NOT_HAVE_ROLE = "User does not have role";
+  public static final String STUDENT_NOT_FOUND = "Student not found with student code %s";
   public static final String ROLE_NOT_FOUND = "Role not found";
   public static final String PASSWORD_REQUEST_CREATED_SUCCESSFULLY = "Password request created successfully";
   public static final String PASSWORD_CHANGED_SUCCESSFULLY = "Password changed successfully";
