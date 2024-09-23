@@ -2,6 +2,7 @@ package com.didan.elearning.courses.service;
 
 import com.didan.elearning.courses.dto.request.ClassStudentRequestDto;
 import com.didan.elearning.courses.dto.response.ClassResponseDto;
+import com.didan.elearning.courses.dto.response.UpdateUserDetailResponseDto;
 import java.util.List;
 
 public interface IClassStudentService {
@@ -10,8 +11,5 @@ public interface IClassStudentService {
     void removeAllStudentsFromClass(String classCode);
     void removeAllClassesOfStudent(String studentCode);
     List<ClassResponseDto> getClassesOfStudent(String studentCode);
-    /**
-     * OpenFeign call to user service to get student details
-     * List<User> getStudentsInClass(String classCode);
-     */
+    List<UpdateUserDetailResponseDto> getStudentsInClass(String classCode);
 }

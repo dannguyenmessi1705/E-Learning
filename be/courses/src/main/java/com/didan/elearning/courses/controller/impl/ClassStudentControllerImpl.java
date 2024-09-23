@@ -4,6 +4,7 @@ import com.didan.elearning.courses.controller.IClassStudentController;
 import com.didan.elearning.courses.dto.request.ClassStudentRequestDto;
 import com.didan.elearning.courses.dto.response.ClassResponseDto;
 import com.didan.elearning.courses.dto.response.GeneralResponse;
+import com.didan.elearning.courses.dto.response.UpdateUserDetailResponseDto;
 import com.didan.elearning.courses.service.IClassStudentService;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -53,5 +54,13 @@ public class ClassStudentControllerImpl implements IClassStudentController {
     log.info("Getting all classes of student {}", studentCode);
     List<ClassResponseDto> classResponseDtos = classStudentService.getClassesOfStudent(studentCode);
     return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(), "Classes of student retrieved successfully", classResponseDtos), HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<GeneralResponse<List<UpdateUserDetailResponseDto>>> getAllStudentsOfClass(
+      String classCode) {
+    log.info("Getting all students of class {}", classCode);
+    List<UpdateUserDetailResponseDto> studentResponseDtos = classStudentService.getStudentsInClass(classCode);
+    return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(), "Students of class retrieved successfully", studentResponseDtos), HttpStatus.OK);
   }
 }

@@ -13,6 +13,7 @@ import com.didan.elearning.courses.entity.CourseClasses;
 import com.didan.elearning.courses.exception.ResourceNotFoundException;
 import com.didan.elearning.courses.repository.CourseClassesRepository;
 import com.didan.elearning.courses.repository.CourseRepository;
+import com.didan.elearning.courses.service.IClientUserService;
 import com.didan.elearning.courses.service.ICourseClassesService;
 import com.didan.elearning.courses.service.client.UsersFeignClient;
 import com.didan.elearning.courses.utils.MapperUtils;
@@ -33,7 +34,7 @@ import org.springframework.util.StringUtils;
 public class CourseClassesServiceImpl implements ICourseClassesService {
   private final CourseClassesRepository courseClassesRepository;
   private final CourseRepository courseRepository;
-  private final UsersFeignClient usersFeignClient;
+  private final IClientUserService clientUserService;
 
   @Override
   public List<ClassResponseDto> getAllClassesOfCourse(String courseCode) {
@@ -47,13 +48,7 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
       log.error("No classes found for course with code {}", courseCode);
       return List.of();
     }
-    List<ClassResponseDto> responses = new ArrayList<>();
-    courseClasses.forEach(courseClass -> {
-      ClassResponseDto response = MapperUtils.map(courseClass, ClassResponseDto.class);
-      response.setCourseCode(courseClass.getClassCode());
-      responses.add(response);
-        });
-    return responses;
+    return mappedListCourseCode(courseClasses);
   }
 
   @Override
@@ -66,53 +61,21 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
 
     CourseClasses newCourse = MapperUtils.map(classRequestDto, CourseClasses.class);
     String classCode = setClassCode(classRequestDto.getStudentYear());
-    validateInstructor(classRequestDto.getInstructorId());
+    clientUserService.validateInstruction(classRequestDto.getInstructorId());
     if (StringUtils.hasText(classRequestDto.getAssistantId())) {
-      validateAssitant(classRequestDto.getAssistantId());
+      clientUserService.validateAssistant(classRequestDto.getAssistantId());
     }
     newCourse.setClassCode(classCode);
     newCourse.setCourse(course);
     newCourse.setClassName(course.getCourseName() + " - " + classCode.split("-")[1]);
     courseClassesRepository.save(newCourse);
     ClassResponseDto response = MapperUtils.map(newCourse, ClassResponseDto.class);
+    response.setInstructor(clientUserService.getUserDetail(newCourse.getInstructorId()));
+    if (StringUtils.hasText(newCourse.getAssistantId())) {
+      response.setAssistant(clientUserService.getUserDetail(newCourse.getAssistantId()));
+    }
     response.setCourseCode(course.getCourseCode());
     return response;
-  }
-
-  private void validateInstructor(String instructorId) {
-    try {
-      ResponseEntity<GeneralResponse<RoleResponseDto>> instructorResponse = usersFeignClient.getRoleForUser(instructorId);
-      if (!Objects.equals(Objects.requireNonNull(instructorResponse.getBody()).getStatusCode(), Status.SUCCESS)) {
-        log.error("Error getting role for instructor with id {}", instructorId);
-        throw new ResourceNotFoundException("Error getting role for instructor with id " + instructorId);
-      }
-      List<String> roles = Arrays.stream(Objects.requireNonNull(instructorResponse.getBody().getData()).getRoleName()).toList();
-      if (!roles.contains(RoleConstants.INSTRUCTOR)) {
-        log.error("User with id {} is not an instructor", instructorId);
-        throw new ResourceNotFoundException("User with id " + instructorId + " is not an instructor");
-      }
-    } catch (Exception e) {
-      log.error("Instructor with id {} not found", instructorId);
-      throw new ResourceNotFoundException(String.format(MessageConstants.INSTRUCTOR_NOT_FOUND, instructorId));
-    }
-  }
-
-  private void validateAssitant(String assistantId) {
-    try {
-      ResponseEntity<GeneralResponse<RoleResponseDto>> instructorResponse = usersFeignClient.getRoleForUser(assistantId);
-      if (!Objects.equals(Objects.requireNonNull(instructorResponse.getBody()).getStatusCode(), Status.SUCCESS)) {
-        log.error("Error getting role for instructor with id {}", assistantId);
-        throw new ResourceNotFoundException("Error getting role for instructor with id " + assistantId);
-      }
-      List<String> roles = Arrays.stream(Objects.requireNonNull(instructorResponse.getBody().getData()).getRoleName()).toList();
-      if (!roles.contains(RoleConstants.INSTRUCTOR)) {
-        log.error("User with id {} is not an assistant", assistantId);
-        throw new ResourceNotFoundException("User with id " + assistantId + " is not an assistant");
-      }
-    } catch (Exception e) {
-      log.error("Assistant with id {} not found", assistantId);
-      throw new ResourceNotFoundException(String.format(MessageConstants.ASSISTANT_NOT_FOUND, assistantId));
-    }
   }
 
   @Override
@@ -154,10 +117,10 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
           return new ResourceNotFoundException(String.format(MessageConstants.CLASS_NOT_FOUND, classUpdateRequestDto.getClassCode()));
         });
     if (StringUtils.hasText(classUpdateRequestDto.getInstructorId())) {
-      validateInstructor(classUpdateRequestDto.getInstructorId());
+      clientUserService.validateInstruction(classUpdateRequestDto.getInstructorId());
     }
     if (StringUtils.hasText(classUpdateRequestDto.getAssistantId())) {
-      validateAssitant(classUpdateRequestDto.getAssistantId());
+      clientUserService.validateAssistant(classUpdateRequestDto.getAssistantId());
     }
     if (StringUtils.hasText(classUpdateRequestDto.getClassName())) {
       courseClass.setClassName(classUpdateRequestDto.getClassName());
@@ -190,6 +153,25 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
     log.info("Class with code {} deleted successfully", classCode);
   }
 
+  @Override
+  public boolean checkIfClassExists(String classCode, String courseCode, String semesterCode) {
+    CourseClasses classes = courseClassesRepository.findCourseClassesByClassCodeIgnoreCase(classCode)
+        .orElseThrow(() -> {
+          log.error("Class with code {} not found", classCode);
+          return new ResourceNotFoundException(String.format(MessageConstants.CLASS_NOT_FOUND, classCode));
+        });
+
+    if (Objects.equals(classes.getCourse().getCourseCode(), courseCode)) {
+      if (classes.getCourse().getSemestersCourses().stream().anyMatch(semesterCourse -> Objects.equals(semesterCourse.getSemester().getSemesterCode(), semesterCode))) {
+        return true;
+      } else {
+        log.error("Class with code {} not found with course code {} in semester with code {}", classCode, courseCode, semesterCode);
+        return false;
+      }
+    }
+    return false;
+  }
+
   public String setClassCode(int startYear) {
     int random = (int) (Math.random() * 999) + 1;
     String classCode = "D" + startYear + "-" + String.format("%03d", random);
@@ -212,6 +194,10 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
     courseClasses.forEach(courseClass -> {
       ClassResponseDto response = MapperUtils.map(courseClass, ClassResponseDto.class);
       response.setCourseCode(courseClass.getCourse().getCourseCode());
+      response.setInstructor(clientUserService.getUserDetail(courseClass.getInstructorId()));
+      if (StringUtils.hasText(courseClass.getAssistantId())) {
+        response.setAssistant(clientUserService.getUserDetail(courseClass.getAssistantId()));
+      }
       responses.add(response);
     });
     return responses;
@@ -220,6 +206,10 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
   private ClassResponseDto mappedCourseCode(CourseClasses courseClass) {
     ClassResponseDto classResponseDto = MapperUtils.map(courseClass, ClassResponseDto.class);
     classResponseDto.setCourseCode(courseClass.getCourse().getCourseCode());
+    classResponseDto.setInstructor(clientUserService.getUserDetail(courseClass.getInstructorId()));
+    if (StringUtils.hasText(courseClass.getAssistantId())) {
+      classResponseDto.setAssistant(clientUserService.getUserDetail(courseClass.getAssistantId()));
+    }
     return classResponseDto;
   }
 }

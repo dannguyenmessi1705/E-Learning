@@ -78,4 +78,12 @@ public class ClassControllerImpl implements IClassController {
     GeneralResponse<List<ClassResponseDto>> response = new GeneralResponse<>(HttpStatus.OK.value(), "Returning classes of course " + courseCode, classResponseDtos);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
+
+  @Override
+  public ResponseEntity<GeneralResponse<Void>> checkIfClassExists(String classCode,
+      String courseCode, String semesterCode) {
+    log.info("Checking if class {} exists...", classCode);
+    boolean exists = courseClassesService.checkIfClassExists(classCode, courseCode, semesterCode);
+    return new ResponseEntity<>(new GeneralResponse<>(HttpStatus.OK.value(), "Class exists: " + exists, null), HttpStatus.OK);
+  }
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ClassStudentsRepository extends JpaRepository<ClassStudents, String> {
   Optional<ClassStudents> findClassStudentsByStudentCodeAndCourseClasses_ClassCode(String studentCode, String classCode);
+  List<ClassStudents> findClassStudentsByCourseClasses_ClassCode(String classCode);
   @Transactional
   @Modifying
   void deleteAllByCourseClasses_ClassCode(String classCode);

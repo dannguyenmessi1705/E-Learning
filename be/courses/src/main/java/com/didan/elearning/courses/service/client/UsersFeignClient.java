@@ -20,4 +20,9 @@ public interface UsersFeignClient {
   ResponseEntity<GeneralResponse<RoleResponseDto>> getRoleForUser(
       @NotBlank(message = "User ID is required")
       @PathVariable("id") String userId);
+
+  @GetMapping("/get/{id}")
+  ResponseEntity<GeneralResponse<UpdateUserDetailResponseDto>> getUserDetails(
+      @NotBlank(message = "User ID is required")
+      @PathVariable("id") String userId);
 }

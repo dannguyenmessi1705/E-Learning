@@ -4,6 +4,7 @@ import com.didan.elearning.courses.dto.error.ErrorDto;
 import com.didan.elearning.courses.dto.request.ClassStudentRequestDto;
 import com.didan.elearning.courses.dto.response.ClassResponseDto;
 import com.didan.elearning.courses.dto.response.GeneralResponse;
+import com.didan.elearning.courses.dto.response.UpdateUserDetailResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -161,33 +162,33 @@ public interface IClassStudentController {
           )
       }
   )
-  @GetMapping("/get/all/{studentCode}")
+  @GetMapping("/get/all/class{studentCode}")
   ResponseEntity<GeneralResponse<List<ClassResponseDto>>> getAllClassesOfStudent(@NotBlank(message = "Student code is required") @PathVariable("studentCode") String studentCode);
 
-//  @Operation(
-//      summary = "Get all students of a class",
-//      description = "Get all students of a class",
-//      responses = {
-//          @ApiResponse(
-//              responseCode = "200",
-//              description = "All students of class retrieved successfully",
-//              content = @Content(
-//                  schema = @Schema(
-//                      implementation = GeneralResponse.class
-//                  )
-//              )
-//          ),
-//          @ApiResponse(
-//              responseCode = "500",
-//              description = "Internal server error",
-//              content = @Content(
-//                  schema = @Schema(
-//                      implementation = ErrorDto.class
-//                  )
-//              )
-//          )
-//      }
-//  )
-//  @GetMapping("/get/all/class/{classCode}")
-//  ResponseEntity<GeneralResponse<List<User>>> getAllStudentsOfClass(@NotBlank(message = "Class code is required") @PathVariable("classCode") String classCode);
+  @Operation(
+      summary = "Get all students of a class",
+      description = "Get all students of a class",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "All students of class retrieved successfully",
+              content = @Content(
+                  schema = @Schema(
+                      implementation = GeneralResponse.class
+                  )
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(
+                      implementation = ErrorDto.class
+                  )
+              )
+          )
+      }
+  )
+  @GetMapping("/get/all/student/{classCode}")
+  ResponseEntity<GeneralResponse<List<UpdateUserDetailResponseDto>>> getAllStudentsOfClass(@NotBlank(message = "Class code is required") @PathVariable("classCode") String classCode);
 }

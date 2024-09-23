@@ -115,13 +115,14 @@ public class UserServiceImpl implements IUserService {
 
     if (StringUtils.hasText(updateUserRequestDto.getMajor()) || StringUtils.hasText(String.valueOf(updateUserRequestDto.getStartYear()))) {
       Optional<StudentDetails> studentDetails = studentDetailsRepository.findFirstByUser_UserId(userId);
-      String studentCode = null;
       if (studentDetails.isEmpty()) {
         mappedStudent.setStudentCode(setStudentCode(updateUserRequestDto.getMajor(), updateUserRequestDto.getStartYear()));
         mappedStudent.setUserId(userId);
         mappedStudent.setUser(user);
         user.setStudentDetails(mappedStudent);
-        setRoleUser(user, RoleConstants.STUDENT);
+        if (!checkSetRole(user, RoleConstants.STUDENT)) {
+          setRoleUser(user, RoleConstants.STUDENT);
+        }
       } else {
         mappedStudent.setUserId(studentDetails.get().getUserId());
         user.setStudentDetails(mappedStudent);
@@ -132,6 +133,10 @@ public class UserServiceImpl implements IUserService {
     resUser = MapperUtils.map(mappedStudent, resUser);
     log.info("User updated successfully, {}", resUser);
     return resUser;
+  }
+
+  public boolean checkSetRole(User user, String roleName) {
+    return user.getRoles().stream().anyMatch(userRoles -> userRoles.getRole().getRoleName().equals(roleName));
   }
 
   public boolean checkExist(String fieldName, String value) {

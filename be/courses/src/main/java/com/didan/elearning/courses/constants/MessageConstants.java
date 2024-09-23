@@ -14,6 +14,7 @@ public class MessageConstants {
   public static final String STUDENT_NOT_FOUND = "Student with code %s not found";
   public static final String INSTRUCTOR_NOT_FOUND = "Instructor with id %s not found";
   public static final String ASSISTANT_NOT_FOUND = "Assistant with id %s not found";
+  public static final String USER_NOT_FOUND = "User with id %s not found";
 
   public static class Status {
     private Status() {}

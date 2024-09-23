@@ -29,25 +29,16 @@ public class ClassResponseDto {
   )
   private String classCode;
 
-  /**
-   * OpenFeint to User Service to get instructor and assistant name
-   * Instructor {instructorId, instructorName}
-   * Assistant {assistantId, assistantName}
-   */
-  @Schema(
-      name = "instructorId",
-      description = "The ID of the instructor",
-      example = "123456"
-  )
-  @NotEmpty(message = "Instructor ID is required")
-  private String instructorId;
 
   @Schema(
-      name = "assistantId",
-      description = "The ID of the assistant",
-      example = "123456"
+      name = "instructor"
   )
-  private String assistantId;
+  private UpdateUserDetailResponseDto instructor;
+
+  @Schema(
+      name = "assistant"
+  )
+  private UpdateUserDetailResponseDto assistant;
 
   @Schema(
       name = "className",

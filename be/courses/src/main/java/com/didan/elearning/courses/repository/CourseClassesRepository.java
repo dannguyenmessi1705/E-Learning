@@ -13,5 +13,4 @@ public interface CourseClassesRepository extends JpaRepository<CourseClasses, St
   Optional<CourseClasses> findCourseClassesByClassCodeIgnoreCase(String classCode);
   List<CourseClasses> findCourseClassesByInstructorIdIgnoreCase(String instructorId);
   List<CourseClasses> findCourseClassesByAssistantIdIgnoreCase(String assistantId);
-
 }

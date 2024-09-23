@@ -14,4 +14,5 @@ public interface ICourseClassesService {
     ClassResponseDto getClassByCode(String classCode);
     ClassResponseDto updateCourseClasses(ClassUpdateRequestDto classUpdateRequestDto);
     void deleteCourseClasses(String classCode);
+    boolean checkIfClassExists(String classCode, String courseCode, String semesterCode);
 }

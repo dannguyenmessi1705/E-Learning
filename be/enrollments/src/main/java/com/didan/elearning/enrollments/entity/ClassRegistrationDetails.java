@@ -5,7 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +32,8 @@ public class ClassRegistrationDetails extends SuperClass {
   private Integer currentEnrollmentQuantity;
   @Column
   private String statusClass; // ClassStatusConstant
+  @OneToMany(mappedBy = "classRegistrationDetails")
+  private List<Enrollment> enrollments;
   @PrePersist
   public void prePersist() {
     this.currentEnrollmentQuantity = 0;

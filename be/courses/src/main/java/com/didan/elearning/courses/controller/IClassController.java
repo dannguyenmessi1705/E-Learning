@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -218,4 +219,34 @@ public interface IClassController {
   )
   @GetMapping("/{classCode}")
   ResponseEntity<GeneralResponse<ClassResponseDto>> getClassByCode(@NotEmpty(message = "Class code is required") @PathVariable("classCode") String classCode);
+
+  @Operation(
+      summary = "Check if class exists",
+      description = "Check if class exists",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "Class exists",
+              content = @Content(
+                  schema = @Schema(
+                      implementation = GeneralResponse.class
+                  )
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(
+                      implementation = ErrorDto.class
+                  )
+              )
+          )
+      }
+  )
+  @GetMapping("/check/{classCode}/{courseCode}/{semesterCode}")
+  ResponseEntity<GeneralResponse<Void>> checkIfClassExists(
+      @NotBlank(message = "Class code is required") @PathVariable("classCode") String classCode,
+      @NotBlank(message = "Course code is required") @PathVariable("courseCode") String courseCode,
+      @NotBlank(message = "Semester code is required") @PathVariable("semesterCode") String semesterCode);
 }
