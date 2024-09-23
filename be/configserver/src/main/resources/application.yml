@@ -36,3 +36,6 @@ logging:
       didan:
         elearning:
           configserver: debug
+
+encrypt:
+  key: 52a7f9495e2faf8cc6423de8c76aacb8081084733825d852

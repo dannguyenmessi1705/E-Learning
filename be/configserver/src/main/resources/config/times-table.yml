@@ -1,8 +1,7 @@
 spring.datasource:
   url: jdbc:mysql://db-mysql-nyc3-60473-do-user-17787633-0.i.db.ondigitalocean.com:25060/elearning_times_table
-  username: 'doadmin'
-  password: 'AVNS_0XadlPN1LVlYrnzEEu4'
-
+  username: "{cipher}b447891ee31d0b9c6b59e13be85e45c65fcb3cc0b158fe5ec2029785db396c71"
+  password: "{cipher}414f97e948d86739788fed29c146445159bd1d999932821c860d3590a389039b6ef11ebaf606dce2a1a723cd74190345"
 spring.jpa:
   properties:
     hibernate:
