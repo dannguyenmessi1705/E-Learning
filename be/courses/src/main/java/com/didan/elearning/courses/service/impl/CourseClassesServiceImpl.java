@@ -1,13 +1,9 @@
 package com.didan.elearning.courses.service.impl;
 
 import com.didan.elearning.courses.constants.MessageConstants;
-import com.didan.elearning.courses.constants.MessageConstants.Status;
-import com.didan.elearning.courses.constants.RoleConstants;
 import com.didan.elearning.courses.dto.request.ClassRequestDto;
 import com.didan.elearning.courses.dto.request.ClassUpdateRequestDto;
 import com.didan.elearning.courses.dto.response.ClassResponseDto;
-import com.didan.elearning.courses.dto.response.GeneralResponse;
-import com.didan.elearning.courses.dto.response.RoleResponseDto;
 import com.didan.elearning.courses.entity.Course;
 import com.didan.elearning.courses.entity.CourseClasses;
 import com.didan.elearning.courses.exception.ResourceNotFoundException;
@@ -15,16 +11,13 @@ import com.didan.elearning.courses.repository.CourseClassesRepository;
 import com.didan.elearning.courses.repository.CourseRepository;
 import com.didan.elearning.courses.service.IClientUserService;
 import com.didan.elearning.courses.service.ICourseClassesService;
-import com.didan.elearning.courses.service.client.UsersFeignClient;
 import com.didan.elearning.courses.utils.MapperUtils;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -61,7 +54,7 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
 
     CourseClasses newCourse = MapperUtils.map(classRequestDto, CourseClasses.class);
     String classCode = setClassCode(classRequestDto.getStudentYear());
-    clientUserService.validateInstruction(classRequestDto.getInstructorId());
+    clientUserService.validateInstructor(classRequestDto.getInstructorId());
     if (StringUtils.hasText(classRequestDto.getAssistantId())) {
       clientUserService.validateAssistant(classRequestDto.getAssistantId());
     }
@@ -117,7 +110,7 @@ public class CourseClassesServiceImpl implements ICourseClassesService {
           return new ResourceNotFoundException(String.format(MessageConstants.CLASS_NOT_FOUND, classUpdateRequestDto.getClassCode()));
         });
     if (StringUtils.hasText(classUpdateRequestDto.getInstructorId())) {
-      clientUserService.validateInstruction(classUpdateRequestDto.getInstructorId());
+      clientUserService.validateInstructor(classUpdateRequestDto.getInstructorId());
     }
     if (StringUtils.hasText(classUpdateRequestDto.getAssistantId())) {
       clientUserService.validateAssistant(classUpdateRequestDto.getAssistantId());

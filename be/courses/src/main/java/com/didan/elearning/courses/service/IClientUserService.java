@@ -6,6 +6,6 @@ import com.didan.elearning.courses.dto.response.UpdateUserDetailResponseDto;
 public interface IClientUserService {
   UpdateUserDetailResponseDto getUserDetail(String userId);
   UpdateUserDetailResponseDto getStudentByStudentCode(String studentCode);
-  RoleResponseDto validateInstruction(String instructorId);
+  RoleResponseDto validateInstructor(String instructorId);
   RoleResponseDto validateAssistant(String assistantId);
 }

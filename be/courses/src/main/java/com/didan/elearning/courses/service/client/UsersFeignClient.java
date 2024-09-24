@@ -21,7 +21,7 @@ public interface UsersFeignClient {
       @NotBlank(message = "User ID is required")
       @PathVariable("id") String userId);
 
-  @GetMapping("/get/{id}")
+  @GetMapping("users/v1/get/{id}")
   ResponseEntity<GeneralResponse<UpdateUserDetailResponseDto>> getUserDetails(
       @NotBlank(message = "User ID is required")
       @PathVariable("id") String userId);

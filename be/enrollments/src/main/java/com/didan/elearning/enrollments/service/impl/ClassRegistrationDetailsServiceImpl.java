@@ -8,44 +8,50 @@ import com.didan.elearning.enrollments.dto.request.ClassRegistrationDetailsUpdat
 import com.didan.elearning.enrollments.dto.response.ClassRegistrationDetailsResponseDto;
 import com.didan.elearning.enrollments.entity.ClassRegistrationDetails;
 import com.didan.elearning.enrollments.exception.FieldErrorException;
+import com.didan.elearning.enrollments.exception.ResourceAlreadyExistException;
 import com.didan.elearning.enrollments.exception.ResourceNotFoundException;
 import com.didan.elearning.enrollments.repository.ClassRegistrationDetailsRepository;
 import com.didan.elearning.enrollments.service.IClassRegistrationDetailsService;
+import com.didan.elearning.enrollments.service.IClientCourseService;
 import com.didan.elearning.enrollments.utils.MapperUtils;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class ClassRegistrationDetailsServiceImpl implements IClassRegistrationDetailsService {
 
   private final ClassRegistrationDetailsRepository classRegistrationDetailsRepository;
+  private final IClientCourseService clientCourseService;
 
   @Override
   public ClassRegistrationDetailsResponseDto createClassRegistrationDetails(
-      ClassRegistrationDetailsCreateRequestDto classRegistrationDetailsCreateRequestDto) {
-
-    /**
-     * OpenFeign call to course service to check if semester, course, class exists
-     * classRegistrationDetailsCreateRequestDto.getSemesterCode()
-     * classRegistrationDetailsCreateRequestDto.getCourseCode()
-     * classRegistrationDetailsCreateRequestDto.getClassCode()
-     * if not exists, throw exception
-     */
-
-    ClassRegistrationDetails classRegistrationDetails = MapperUtils.map(
-        classRegistrationDetailsCreateRequestDto, ClassRegistrationDetails.class);
-    classRegistrationDetailsRepository.save(classRegistrationDetails);
-    log.info(String.format(MessageConstant.CREATE_CLASS_REGISTRATION_DETAILS_SUCCESS,
-        classRegistrationDetails.getClassDetailsId(), classRegistrationDetails.getClassCode(),
-        classRegistrationDetails.getSemesterCode(), classRegistrationDetails.getCourseCode()));
-    return MapperUtils.map(classRegistrationDetails, ClassRegistrationDetailsResponseDto.class);
+      ClassRegistrationDetailsCreateRequestDto requestDto) {
+    if (!this.clientCourseService.checkClassExisted(requestDto.getClassCode(), requestDto.getCourseCode(),
+        requestDto.getSemesterCode())) {
+      log.error("Class registration details not created because class not found");
+      throw new ResourceNotFoundException("Class registration details not created because class not found");
+    } else {
+      this.classRegistrationDetailsRepository.findClassRegistrationDetailsByClassCodeAndCourseCodeAndSemesterCode(
+          StringUtils.capitalize(requestDto.getClassCode()), StringUtils.capitalize(requestDto.getCourseCode()),
+          StringUtils.capitalize(requestDto.getSemesterCode())).ifPresent((classRegistrationDetailsx) -> {
+            log.error("Class registration details already existed");
+            throw new ResourceAlreadyExistException("Class registration details already existed");
+          });
+      ClassRegistrationDetails classRegistrationDetails = MapperUtils.map(
+          requestDto, ClassRegistrationDetails.class);
+      this.classRegistrationDetailsRepository.save(classRegistrationDetails);
+      log.info(String.format(MessageConstant.CREATE_CLASS_REGISTRATION_DETAILS_SUCCESS,
+          classRegistrationDetails.getClassDetailsId(), classRegistrationDetails.getClassCode(),
+          classRegistrationDetails.getSemesterCode(), classRegistrationDetails.getCourseCode()));
+      return MapperUtils.map(classRegistrationDetails, ClassRegistrationDetailsResponseDto.class);
+    }
   }
 
   @Override

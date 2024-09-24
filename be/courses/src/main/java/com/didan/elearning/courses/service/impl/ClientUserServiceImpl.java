@@ -54,7 +54,7 @@ public class ClientUserServiceImpl implements IClientUserService {
       }
     }
   @Override
-  public RoleResponseDto validateInstruction(String instructorId) {
+  public RoleResponseDto validateInstructor(String instructorId) {
     try {
       ResponseEntity<GeneralResponse<RoleResponseDto>> instructorResponse = usersFeignClient.getRoleForUser(instructorId);
       if (!Objects.equals(Objects.requireNonNull(instructorResponse.getBody()).getStatusCode(), Status.SUCCESS)) {
